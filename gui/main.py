@@ -20,127 +20,189 @@ small_font = ('Verdana',11)
 def homepage():
     findbodyframe.pack_forget()
     findseatbodyframe.pack_forget()
+    userinfobodyframe.pack_forget()
     homebodyframe.pack(fill=X)
 def findtrip():
     homebodyframe.pack_forget()
     findseatbodyframe.pack_forget()
+    userinfobodyframe.pack_forget()
     findbodyframe.pack(fill=X, ipady=50)
 def findseat():
     homebodyframe.pack_forget()
     findbodyframe.pack_forget()
-    findseatbodyframe.pack(fill=X, ipady=50)
+    findseatbodyframe.pack(fill=X, ipady=40)
+def userinfo():
+    findseatbodyframe.pack_forget()
+    userinfobodyframe.pack(fill=X, ipady=50)
+seatno = 0
 def changecolor1():
-    seatbtn1.config(image=redbtn1, state=DISABLED)
+    seatno = 1
+    seatbtn1.config(image=redbtn1)
 def changecolor2():
-    seatbtn2.config(image=redbtn2, state=DISABLED)
+    seatno = 2
+    seatbtn2.config(image=redbtn2)
 def changecolor3():
-    seatbtn3.config(image=redbtn3, state=DISABLED)
+    seatno = 3
+    seatbtn3.config(image=redbtn3)
 def changecolor4():
-    seatbtn4.config(image=redbtn4, state=DISABLED)
+    seatno = 4
+    seatbtn4.config(image=redbtn4)
 def changecolor5():
-    seatbtn5.config(image=redbtn5, state=DISABLED)
+    seatno = 5
+    seatbtn5.config(image=redbtn5)
 def changecolor6():
-    seatbtn6.config(image=redbtn6, state=DISABLED)
+    seatno = 6
+    seatbtn6.config(image=redbtn6)
 def changecolor7():
-    seatbtn7.config(image=redbtn7, state=DISABLED)
+    seatno = 7
+    seatbtn7.config(image=redbtn7)
 def changecolor8():
-    seatbtn8.config(image=redbtn8, state=DISABLED)
+    seatno = 8
+    seatbtn8.config(image=redbtn8)
 def changecolor9():
-    seatbtn9.config(image=redbtn9, state=DISABLED)
+    seatno = 9
+    seatbtn9.config(image=redbtn9)
 def changecolor10():
-    seatbtn10.config(image=redbtn10, state=DISABLED)
+    seatno = 10
+    seatbtn10.config(image=redbtn10)
 def changecolor11():
-    seatbtn11.config(image=redbtn11, state=DISABLED)
+    seatno = 11
+    seatbtn11.config(image=redbtn11)
 def changecolor12():
-    seatbtn12.config(image=redbtn12, state=DISABLED)
+    seatno = 12
+    seatbtn12.config(image=redbtn12)
 def changecolor13():
-    seatbtn13.config(image=redbtn13, state=DISABLED)
+    seatno = 13
+    seatbtn13.config(image=redbtn13)
 def changecolor14():
-    seatbtn14.config(image=redbtn14, state=DISABLED)
+    seatno = 14
+    seatbtn14.config(image=redbtn14)
 def changecolor15():
-    seatbtn15.config(image=redbtn15, state=DISABLED)
+    seatno = 15
+    seatbtn15.config(image=redbtn15)
 def changecolor16():
-    seatbtn16.config(image=redbtn16, state=DISABLED)
+    seatno = 16
+    seatbtn16.config(image=redbtn16)
 def changecolor17():
-    seatbtn17.config(image=redbtn17, state=DISABLED)
+    seatno = 17
+    seatbtn17.config(image=redbtn17)
 def changecolor18():
-    seatbtn18.config(image=redbtn18, state=DISABLED)
+    seatno = 18
+    seatbtn18.config(image=redbtn18)
 def changecolor19():
-    seatbtn19.config(image=redbtn19, state=DISABLED)
+    seatno = 19
+    seatbtn19.config(image=redbtn19)
 def changecolor20():
-    seatbtn20.config(image=redbtn20, state=DISABLED)
+    seatno = 20
+    seatbtn20.config(image=redbtn20)
 def changecolor21():
-    seatbtn21.config(image=redbtn21, state=DISABLED)
+    seatno = 21
+    seatbtn21.config(image=redbtn21)
 def changecolor22():
-    seatbtn22.config(image=redbtn22, state=DISABLED)
+    seatno = 22
+    seatbtn22.config(image=redbtn22)
 def changecolor23():
-    seatbtn23.config(image=redbtn23, state=DISABLED)
+    seatno = 23
+    seatbtn23.config(image=redbtn23)
 def changecolor24():
-    seatbtn24.config(image=redbtn24, state=DISABLED)
+    seatno = 24
+    seatbtn24.config(image=redbtn24)
 def changecolor25():
-    seatbtn25.config(image=redbtn25, state=DISABLED)
+    seatno = 25
+    seatbtn25.config(image=redbtn25)
 def changecolor26():
-    seatbtn26.config(image=redbtn26, state=DISABLED)
+    seatno = 26
+    seatbtn26.config(image=redbtn26)
 def changecolor27():
-    seatbtn27.config(image=redbtn27, state=DISABLED)
+    seatno = 27
+    seatbtn27.config(image=redbtn27)
 def changecolor28():
-    seatbtn28.config(image=redbtn28, state=DISABLED)
+    seatno = 28
+    seatbtn28.config(image=redbtn28)
 def changecolor29():
-    seatbtn29.config(image=redbtn29, state=DISABLED)
+    seatno = 29
+    seatbtn29.config(image=redbtn29)
 def changecolor30():
-    seatbtn30.config(image=redbtn30, state=DISABLED)
+    seatno = 30
+    seatbtn30.config(image=redbtn30)
 def changecolor31():
-    seatbtn31.config(image=redbtn31, state=DISABLED)
+    seatno = 31
+    seatbtn31.config(image=redbtn31)
 def changecolor32():
-    seatbtn32.config(image=redbtn32, state=DISABLED)
+    seatno = 32
+    seatbtn32.config(image=redbtn32)
 def changecolor33():
-    seatbtn33.config(image=redbtn33, state=DISABLED)
+    seatno = 33
+    seatbtn33.config(image=redbtn33)
 def changecolor34():
-    seatbtn34.config(image=redbtn34, state=DISABLED)
+    seatno = 34
+    seatbtn34.config(image=redbtn34)
 def changecolor35():
-    seatbtn35.config(image=redbtn35, state=DISABLED)
+    seatno = 35
+    seatbtn35.config(image=redbtn35)
 def changecolor36():
-    seatbtn36.config(image=redbtn36, state=DISABLED)
+    seatno = 36
+    seatbtn36.config(image=redbtn36)
 def changecolor37():
-    seatbtn37.config(image=redbtn37, state=DISABLED)
+    seatno = 37
+    seatbtn37.config(image=redbtn37)
 def changecolor38():
-    seatbtn38.config(image=redbtn38, state=DISABLED)
+    seatno = 38
+    seatbtn38.config(image=redbtn38)
 def changecolor39():
-    seatbtn39.config(image=redbtn39, state=DISABLED)
+    seatno = 39
+    seatbtn39.config(image=redbtn39)
 def changecolor40():
-    seatbtn40.config(image=redbtn40, state=DISABLED)
+    seatno = 40
+    seatbtn40.config(image=redbtn40)
 def changecolor41():
-    seatbtn41.config(image=redbtn41, state=DISABLED)
+    seatno = 41
+    seatbtn41.config(image=redbtn41)
 def changecolor42():
-    seatbtn42.config(image=redbtn42, state=DISABLED)
+    seatno = 42
+    seatbtn42.config(image=redbtn42)
 def changecolor43():
-    seatbtn43.config(image=redbtn43, state=DISABLED)
+    seatno = 43
+    seatbtn43.config(image=redbtn43)
 def changecolor44():
-    seatbtn44.config(image=redbtn44, state=DISABLED)
+    seatno = 44
+    seatbtn44.config(image=redbtn44)
 def changecolor45():
-    seatbtn45.config(image=redbtn45, state=DISABLED)
+    seatno = 45
+    seatbtn45.config(image=redbtn45)
 def changecolor46():
-    seatbtn46.config(image=redbtn46, state=DISABLED)
+    seatno = 46
+    seatbtn46.config(image=redbtn46)
 def changecolor47():
-    seatbtn47.config(image=redbtn47, state=DISABLED)
+    seatno = 47
+    seatbtn47.config(image=redbtn47)
 def changecolor48():
-    seatbtn48.config(image=redbtn48, state=DISABLED)
+    seatno = 48
+    seatbtn48.config(image=redbtn48)
 def changecolor49():
-    seatbtn49.config(image=redbtn49, state=DISABLED)
+    seatno = 49
+    seatbtn49.config(image=redbtn49)
 def changecolor50():
-    seatbtn50.config(image=redbtn50, state=DISABLED)
+    seatno = 50
+    seatbtn50.config(image=redbtn50)
 def changecolor51():
-    seatbtn51.config(image=redbtn51, state=DISABLED)
+    seatno = 51
+    seatbtn51.config(image=redbtn51)
 def changecolor52():
-    seatbtn52.config(image=redbtn52, state=DISABLED)
+    seatno = 52
+    seatbtn52.config(image=redbtn52)
 def changecolor53():
-    seatbtn53.config(image=redbtn53, state=DISABLED)
+    seatno = 53
+    seatbtn53.config(image=redbtn53)
 def changecolor54():
-    seatbtn54.config(image=redbtn54, state=DISABLED)
+    seatno = 54
+    seatbtn54.config(image=redbtn54)
 def changecolor55():
-    seatbtn55.config(image=redbtn55, state=DISABLED)
+    seatno = 55
+    seatbtn55.config(image=redbtn55)
 def changecolor56():
-    seatbtn56.config(image=redbtn56, state=DISABLED)
+    seatno = 56
+    seatbtn56.config(image=redbtn56)
 #Container
 containerframe = LabelFrame(root, bg=blue)
 #Header
@@ -286,12 +348,12 @@ submitfindbtn = Button(marginframe2, text="FIND", font=medium_font, fg="white", 
 submitfindbtn.grid(row=12, ipadx=40, columnspan=2)
 
 #START FIND SEAT PAGE !!!!!!!!!!!!!!!!!!!
-findseatbodyframe = LabelFrame(containerframe, bd=0, bg="green")
+findseatbodyframe = LabelFrame(containerframe, bd=0, bg=grey)
 #Blank Frame 1
-seatblankframe1 = LabelFrame(findseatbodyframe, bg=lightedgrey, bd=0)
-seatblankframe1.pack(fill=X)
-#Seat White Background Frame
-seatbgframe = LabelFrame(findseatbodyframe, bd=0, bg='white')
+seatblankframe1 = LabelFrame(findseatbodyframe, bg=grey, bd=0)
+seatblankframe1.pack(fill=X, ipady=35)
+#Seat Background Frame
+seatbgframe = LabelFrame(findseatbodyframe, bd=0, bg=grey)
 seatbgframe.pack()
 #Seat Holder Container Frame
 seatcontainerframe = LabelFrame(seatbgframe, highlightthickness=2, highlightbackground = blue)
@@ -537,6 +599,27 @@ seatbtn55 = Button(seatrightframe, image=greenbtn55, borderwidth=0, command=chan
 seatbtn55.grid(row=2, column=6)
 seatbtn56 = Button(seatrightframe, image=greenbtn56, borderwidth=0, command=changecolor56)
 seatbtn56.grid(row=3, column=6)
+#Blank Frame 2
+seatblankframe2 = LabelFrame(findseatbodyframe, bg=grey, bd=0)
+seatblankframe2.pack(fill=X, ipady=15)
+#Find Seat Submit Button
+findseatbtn = Button(findseatbodyframe, text="Next", fg="white", bg=blue, font=medium_font, command=userinfo)
+findseatbtn.pack(ipadx=40)
+#User Info Page Frame !!!!!!!!!!!!!!!!!!
+userinfobodyframe = LabelFrame(containerframe, bd = 0, bg=grey)
+#Blank Frame 1
+userblankframe1 = LabelFrame(userinfobodyframe, bg=grey, bd=0)
+userblankframe1.pack(fill=X, ipady=25)
+userholderframe = LabelFrame(userinfobodyframe, highlightthickness=2, highlightbackground = blue, bg='white')
+userholderframe.pack()
+#Progress Bar
+progressimg = ImageTk.PhotoImage(Image.open('images/buyprocess.png'))
+progresslabel = Label(userholderframe, image=progressimg, bg='white')
+progresslabel.grid(row=0, column=0, columnspan=2)
+#Customer label
+userimg = ImageTk.PhotoImage(Image.open('images/customerlabel.png'))
+userlabel = Label(userholderframe, image=userimg, bg='white')
+userlabel.grid(row=1, column=0)
 #Display Fixed Frame
 containerframe.pack(fill=BOTH, expand=YES)
 headerframe.pack(fill=X, side=TOP)
