@@ -21,11 +21,17 @@ def homepage():
     findbodyframe.pack_forget()
     findseatbodyframe.pack_forget()
     userinfobodyframe.pack_forget()
+    firstpageframe.pack()
+    secondpageframe.pack_forget()
+    thirdpageframe.pack_forget()
     homebodyframe.pack(fill=X)
 def findtrip():
     homebodyframe.pack_forget()
     findseatbodyframe.pack_forget()
     userinfobodyframe.pack_forget()
+    firstpageframe.pack()
+    secondpageframe.pack_forget()
+    thirdpageframe.pack_forget()
     findbodyframe.pack(fill=X, ipady=50)
 def findseat():
     homebodyframe.pack_forget()
@@ -33,7 +39,14 @@ def findseat():
     findseatbodyframe.pack(fill=X, ipady=40)
 def userinfo():
     findseatbodyframe.pack_forget()
-    userinfobodyframe.pack(fill=X, ipady=50)
+    userinfobodyframe.pack(fill=X, ipady=35)
+def payment():
+    firstpageframe.pack_forget()
+    secondpageframe.pack()
+def completed():
+    secondpageframe.pack_forget()
+    thirdpageframe.pack()
+
 seatno = 0
 def changecolor1():
     seatno = 1
@@ -325,9 +338,9 @@ destientry.grid(row=5, column=0, ipadx=270, ipady=5, columnspan=2)
 findblankframe5 = LabelFrame(marginframe2, bg=lightedgrey, bd=0)
 findblankframe5.grid(row=6, column=0, ipady=7, columnspan=2)
 #One-Doulbe Way selection
-r = IntVar()
-Radiobutton(marginframe2, text="One-way", font=small_font, fg=blue, variable=r, value=1).grid(row=7, column=0)
-Radiobutton(marginframe2, text='Round-trip', font=small_font, fg=blue, variable=r, value=2).grid(row=7, column=1)
+r1 = IntVar()
+Radiobutton(marginframe2, text="One-way", font=small_font, fg=blue, variable=r1, value=1).grid(row=7, column=0)
+Radiobutton(marginframe2, text='Round-trip', font=small_font, fg=blue, variable=r1, value=2).grid(row=7, column=1)
 #Blank Frame 6
 findblankframe6 = LabelFrame(marginframe2, bg=lightedgrey, bd=0)
 findblankframe6.grid(row=8, column=0, ipady=7, columnspan=2)
@@ -608,18 +621,86 @@ findseatbtn.pack(ipadx=40)
 #User Info Page Frame !!!!!!!!!!!!!!!!!!
 userinfobodyframe = LabelFrame(containerframe, bd = 0, bg=grey)
 #Blank Frame 1
-userblankframe1 = LabelFrame(userinfobodyframe, bg=grey, bd=0)
-userblankframe1.pack(fill=X, ipady=25)
+customerinfoblankframe1 = LabelFrame(userinfobodyframe, bg=grey, bd=0)
+customerinfoblankframe1.pack(fill=X, ipady=25)
 userholderframe = LabelFrame(userinfobodyframe, highlightthickness=2, highlightbackground = blue, bg='white')
 userholderframe.pack()
+#Customer Info(1st Page)
+firstpageframe = LabelFrame(userholderframe, bd=0, bg='white')
+firstpageframe.pack()
 #Progress Bar
-progressimg = ImageTk.PhotoImage(Image.open('images/buyprocess.png'))
-progresslabel = Label(userholderframe, image=progressimg, bg='white')
-progresslabel.grid(row=0, column=0, columnspan=2)
-#Customer label
-userimg = ImageTk.PhotoImage(Image.open('images/customerlabel.png'))
-userlabel = Label(userholderframe, image=userimg, bg='white')
-userlabel.grid(row=1, column=0)
+progress1img = ImageTk.PhotoImage(Image.open('images/customerinfobar.png').resize((800, 100), Image.ANTIALIAS))
+progresslabel = Label(firstpageframe, image=progress1img, bg='white')
+progresslabel.grid(row=0, column=0, columnspan=3)
+#Sub head 1 label
+subhead1img = ImageTk.PhotoImage(Image.open('images/customerinfolabel.png').resize((160, 60), Image.ANTIALIAS))
+subhead1label = Label(firstpageframe, image=subhead1img, bg='white')
+subhead1label.grid(row=1, column=0, sticky='W', pady=5)
+#Left-Mid-Right UserInfo Frame
+userinfoleftframe = LabelFrame(firstpageframe, bg='white', bd=0)
+userinfoleftframe.grid(row=2, column=0, pady=10)
+userinfomidframe = LabelFrame(firstpageframe, bg='white')
+userinfomidframe.grid(row=2, column=1, ipady=10, pady=10)
+userinforightframe = LabelFrame(firstpageframe, bg='white', bd=0)
+userinforightframe.grid(row=2, column=2, pady=10)
+#Component
+fullnamelabel = Label(userinfoleftframe, text="Full Name", bg='white', font=small_font)
+fullnamelabel.grid(row=0, column=0)
+fullnameentry = Entry(userinfoleftframe, font=small_font, highlightthickness=2, highlightbackground = blue)
+fullnameentry.grid(row=0, column=1, ipady=5, pady=12)
+emaillabel = Label(userinfoleftframe, text="Email", bg='white', font=small_font)
+emaillabel.grid(row=1, column=0)
+emailentry = Entry(userinfoleftframe, font=small_font, highlightthickness=2, highlightbackground = blue)
+emailentry.grid(row=1, column=1, ipady=5, pady=12)
+phonenumberlabel = Label(userinfoleftframe, text="Phone Number", bg='white', font=small_font)
+phonenumberlabel.grid(row=2, column=0)
+phonenumberentry = Entry(userinfoleftframe, font=small_font, highlightthickness=2, highlightbackground = blue)
+phonenumberentry.grid(row=2, column=1, ipady=5, pady=12)
+idpassportlabel = Label(userinforightframe, text="ID/Passport Number", bg='white', font=small_font)
+idpassportlabel.grid(row=0, column=0)
+idpassportentry = Entry(userinforightframe, font=small_font, highlightthickness=2, highlightbackground = blue)
+idpassportentry.grid(row=0, column=1, ipady=5, pady=12)
+emailconfirmlabel = Label(userinforightframe, text="Email Confirmation", bg='white', font=small_font)
+emailconfirmlabel.grid(row=1, column=0)
+emailconfirmentry = Entry(userinforightframe, font=small_font, highlightthickness=2, highlightbackground = blue)
+emailconfirmentry.grid(row=1, column=1, ipady=5, pady=12)
+userinfonextbtn = Button(firstpageframe, font=medium_font, text="Next", fg="white", bg=blue, command=payment)
+userinfonextbtn.grid(row=3, column=0, columnspan=3, ipadx=15, pady=10)
+#Payment Page(2nd Page)
+secondpageframe = LabelFrame(userholderframe, bd=0, bg='white')
+#Progress Bar
+progress2img = ImageTk.PhotoImage(Image.open('images/paymentbar.png').resize((800, 100), Image.ANTIALIAS))
+progress2label = Label(secondpageframe, image=progress2img, bg='white')
+progress2label.grid(row=0, column=0)
+#Sub head 2 label
+subhead2img = ImageTk.PhotoImage(Image.open('images/paymentlabel.png').resize((160, 60), Image.ANTIALIAS))
+subhead2label = Label(secondpageframe, image=subhead2img, bg='white')
+subhead2label.grid(row=1, column=0, sticky='W', pady=5)
+#Component page 2
+r2 = IntVar()
+Radiobutton(secondpageframe, text="Purchase offline(at gas station, postoffice)", font=medium_font, fg=blue, variable=r2, value=1, bg="white").grid(row=2, column=0, sticky='W', pady=5)
+Radiobutton(secondpageframe, text='Purchase online by Naspas', font=medium_font, fg=blue, variable=r2, value=2, bg="white").grid(row=3, column=0, sticky='W', pady=5)
+Radiobutton(secondpageframe, text='Purchase online by VNPay', font=medium_font, fg=blue, variable=r2, value=3, bg="white").grid(row=4, column=0, sticky='W', pady=5)
+Radiobutton(secondpageframe, text='Purchase online by MOMO', font=medium_font, fg=blue, variable=r2, value=4, bg="white").grid(row=5, column=0, sticky='W', pady=5)
+paymentnextbtn = Button(secondpageframe, font=medium_font, text="Next", fg="white", bg=blue, command=completed)
+paymentnextbtn.grid(row=6, column=0, ipadx=15, pady=10)
+#Completd Page(3rd Page)
+thirdpageframe = LabelFrame(userholderframe, bd=0, bg='white')
+#Progress Bar
+progress3img = ImageTk.PhotoImage(Image.open('images/completedbar.png').resize((800, 100), Image.ANTIALIAS))
+progress3label = Label(thirdpageframe, image=progress3img, bg='white')
+progress3label.grid(row=0, column=0)
+#Sub head 3 label
+subhead3img = ImageTk.PhotoImage(Image.open('images/completedlabel.png').resize((160, 60), Image.ANTIALIAS))
+subhead3label = Label(thirdpageframe, image=subhead3img, bg='white')
+subhead3label.grid(row=1, column=0, sticky='W', pady=5)
+#Component page 3
+sucesspurchasedimg = ImageTk.PhotoImage(Image.open('images/successpurchased.png').resize((700, 70), Image.ANTIALIAS))
+sucesspurchasedlabel = Label(thirdpageframe, image=sucesspurchasedimg, bg='white')
+sucesspurchasedlabel.grid(row=2, column=0, pady=10)
+endingpurchasesbtn = Button(thirdpageframe, font=medium_font, text="Back To Home Screen", fg="white", bg=blue, command=homepage)
+endingpurchasesbtn.grid(row=3, column=0, pady=10)
+
 #Display Fixed Frame
 containerframe.pack(fill=BOTH, expand=YES)
 headerframe.pack(fill=X, side=TOP)
