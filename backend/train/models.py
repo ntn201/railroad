@@ -3,6 +3,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from utils import get_passing_station
 
+
 class Train(models.Model):
     name = models.CharField(max_length=120)
     number_of_seats = models.IntegerField()
