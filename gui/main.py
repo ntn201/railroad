@@ -1,5 +1,6 @@
 from tkinter import *
 from PIL import ImageTk, Image
+from datetime import datetime
 
 root = Tk()
 root.title('Good Job!')
@@ -278,7 +279,10 @@ headerframe = LabelFrame(containerframe, bg=blue)
 brandframe = LabelFrame(headerframe, bd=0, bg=blue)
 dateframe = LabelFrame(headerframe, bd=0, bg=blue)
 trainbrandlabel = Label(brandframe, text='TRAIN MANAGEMENT SYSTEM', bg=blue, fg='white', font=large_font)
-trainbrandlabel2 = Label(dateframe, text='Monday, 28/01/01', bg=blue, fg='white', font=small_font)
+now = datetime.now()
+day = datetime.today().strftime('%A')
+dt_string = now.strftime(f"{day} %H:%M %d/%m/%Y")
+trainbrandlabel2 = Label(dateframe, text=dt_string, bg=blue, fg='white', font=small_font)
 #Display Header
 brandframe.grid(row=0, column=0, ipadx=60)
 dateframe.grid(row=0, column=1, ipadx=100)
