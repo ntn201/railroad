@@ -16,15 +16,30 @@ class Ticket(models.Model):
     phone = models.CharField(default='Customer phone number', max_length=200)
     email = models.CharField(default='Customer email', max_length=200,null=True)
 
-    # seat =
-    price = models.IntegerField(default=0)
+    print("Journey information")
+    starting_station = models.CharField(default='Where from?', max_length=255)
+    destination = models.CharField(default='Where to?', max_length= 255)
 
-    STATUS_CHOICES = (
+    TICKET_TYPE = (
+        ('One-way', 'One-way'),
+        ('Round-trip', 'Round-trip'),
+    )
+
+    ticket_type = models.CharField('ticket type',
+                                   choices=TICKET_TYPE,
+                                   max_length=255,
+                                   blank=True,
+                                   null=True)
+    number_of_seats = models.IntegerField(default=0)
+    # seat =
+    price = models.IntegerField('Price (in thousands dong)', default=0)
+
+    TICKET_STATUS_CHOICES = (
         ('TAKEN', 'TAKEN'),
         ('PAID', 'PAID'),
     )
     status = models.CharField('Status',
-                              choices=STATUS_CHOICES,
+                              choices=TICKET_STATUS_CHOICES,
                               max_length=255,
                               blank=True,
                               null=True)
