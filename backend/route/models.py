@@ -6,3 +6,11 @@ class Route(models.Model):
     train_id = models.CharField(max_length=10)
     arrive_time = models.TimeField()
     arrive_order = models.IntegerField()
+
+    def __str__(self):
+        return self.train_id
+
+    @classmethod
+    def create(cls, station, train_id, arrive_time, arrive_order):
+        route = Route(station=station, train_id=train_id, arrive_time=arrive_time, arrive_order=arrive_order)
+        return route

@@ -51,3 +51,7 @@ class Ticket(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    @classmethod
+    def create(cls, starting, destination):
+        return 0
