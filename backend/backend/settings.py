@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'train',
     'station',
+    'railroute',
 ]
 
 MIDDLEWARE = [
