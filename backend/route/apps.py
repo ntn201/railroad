@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class RailrouteConfig(AppConfig):
+class RouteConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'railroute'
+    name = 'route'

@@ -9,14 +9,12 @@ except ImportError:
 # Create your models here.
 class Ticket(models.Model):
     id = models.AutoField(primary_key=True)
-    print("Customer information")
     customer_name = models.CharField(max_length=60,
                                      default='Type your name in')
 
     phone = models.CharField(default='Customer phone number', max_length=200)
     email = models.CharField(default='Customer email', max_length=200,null=True)
 
-    print("Journey information")
     starting_station = models.CharField(default='Where from?', max_length=255)
     destination = models.CharField(default='Where to?', max_length= 255)
 
