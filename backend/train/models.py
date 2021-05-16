@@ -5,10 +5,11 @@ from station.models import Station
 
 
 class Train(models.Model):
-    name = models.CharField(max_length=120)
-    number_of_seats = ArrayField(ArrayField(models.IntegerField(null=True, blank=True), size=56, default=list), default=list)
-    starting_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='+')
-    final_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='+')
+    train_name = models.CharField(max_length=120)
+    route_name = models.ForeignKey(Route, on_delete=models.CASCADE)
+    departing_time = models.DateTimeField()
+    number_of_cars = models.IntegerField()
+    number_of_seats = models.IntegerField()
 
     def __str__ (self):
-        return self.name
+        return self.train_name
