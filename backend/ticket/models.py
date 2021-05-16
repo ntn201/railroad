@@ -1,6 +1,7 @@
 from django.db import models
 from station.models import Station
 from seat.models import Seat
+from train.models import Train
 try:
     from django.utils import timezone
 except ImportError:
@@ -16,8 +17,9 @@ class Ticket(models.Model):
     phone = models.CharField(default='Customer phone number', max_length=200)
     email = models.CharField(default='Customer email', max_length=200,null=True)
 
-    starting_station = models.CharField(default='Where from?', max_length=255)
-    destination = models.CharField(default='Where to?', max_length= 255)
+    departing_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name= "Departure", default= True)
+    destination = models.ForeignKey(Station, on_delete=models.CASCADE, related_name="destination", default= True)
+    train_name = models.ForeignKey(Train, on_delete=models.CASCADE)
 
     TICKET_TYPE = (
         ('One-way', 'One-way'),
@@ -29,26 +31,14 @@ class Ticket(models.Model):
                                    max_length=255,
                                    blank=True,
                                    null=True)
-    number_of_seats = models.IntegerField(default=0)
+    seat_number = models.ForeignKey(Seat, on_delete=models.CASCADE)
     # seat =
     price = models.IntegerField('Price (in thousands dong)', default=0)
-
-    TICKET_STATUS_CHOICES = (
-        ('TAKEN', 'TAKEN'),
-        ('PAID', 'PAID'),
-    )
-    status = models.CharField('Status',
-                              choices=TICKET_STATUS_CHOICES,
-                              max_length=255,
-                              blank=True,
-                              null=True)
 
     bought_in = models.DateTimeField(blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
-    note = models.CharField(default='Note', max_length=255)
 
     def __str__(self):
         return str(self.id)
