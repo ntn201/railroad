@@ -1,10 +1,6 @@
 from django.db import models
-<<<<<<< HEAD
-=======
-from train.models import Train
 from station.models import Station
-from seats.models import Seats
->>>>>>> 3bcbefce09f29119fab4620d41ec81a49879c8cc
+from seat.models import Seat
 try:
     from django.utils import timezone
 except ImportError:
