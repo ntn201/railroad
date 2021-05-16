@@ -53,5 +53,6 @@ class Ticket(models.Model):
         return str(self.id)
 
     @classmethod
-    def create(cls, starting, destination):
-        return 0
+    def create(cls, starting, destination, name, phone, email, ticket_type, ):
+        
+        ticket = cls()
