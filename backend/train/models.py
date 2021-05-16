@@ -11,5 +11,5 @@ class Train(models.Model):
     number_of_cars = models.IntegerField()
     number_of_seats = models.IntegerField()
 
-    def __str__ (self):
+    def __str__(self):
         return self.train_name
