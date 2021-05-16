@@ -38,11 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'train',
-    'ticket',
-    'station',
-    'route',
-    'seat',
+    'train.apps.TrainConfig',
+    'ticket.apps.TicketConfig',
+    'station.apps.StationConfig',
+    'route.apps.RouteConfig',
+    'seat.apps.SeatConfig',
     'schedule',
 ]
 
