@@ -3,7 +3,7 @@ from train.models import Train
 
 
 # Create your models here.
-class Seats(models.Model):
+class Seat(models.Model):
     train_name = models.ForeignKey(Train, on_delete=models.CASCADE)
     car_number = models.IntegerField()
     seat_number = models.IntegerField()

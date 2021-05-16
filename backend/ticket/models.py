@@ -1,5 +1,4 @@
 from django.db import models
-from train.models import Train
 try:
     from django.utils import timezone
 except ImportError:
