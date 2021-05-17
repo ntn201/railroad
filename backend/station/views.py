@@ -41,7 +41,7 @@ class StationDetail(APIView):
             return Response(srlr.data)
         return Response(srlr.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format):
+    def delete(self, request, pk, format=None):
         station = self.get_object(pk)
         station.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

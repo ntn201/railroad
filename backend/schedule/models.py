@@ -10,7 +10,6 @@ except ImportError:
 class Schedule(models.Model):
     route_name = models.ForeignKey(Route, on_delete=models.CASCADE)
     arrive_order = models.IntegerField(default=1)
-    # arrive_order = models.ForeignKey(Route, on_delete=models.CASCADE)
     travel_time = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):

@@ -8,8 +8,4 @@ class Route(models.Model):
     arrive_order = models.IntegerField()
 
     def __str__(self):
-        return f"Train: {self.train_id} - Station: {self.station}"
-
-    
-
-
+        return f"Route: {self.route_name} - Station: {self.station}"
