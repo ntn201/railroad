@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Station
 
+
 class StationSerializer(serializers.ModelSerializer):
     """name = serializers.CharField(required=True, max_length=60)
 

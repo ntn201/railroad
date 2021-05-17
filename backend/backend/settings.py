@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-x0*ur2ln-nc4e1$459ym5f86!jva!kk(0j@h3b085m)4yp)v_i'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,13 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'rest_framework',
 
     'train.apps.TrainConfig',
     'ticket.apps.TicketConfig',
     'station.apps.StationConfig',
     'route.apps.RouteConfig',
     'seat.apps.SeatConfig',
-    'schedule',
+    'schedule.apps.ScheduleConfig',
 ]
 
 MIDDLEWARE = [
