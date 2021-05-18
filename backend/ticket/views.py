@@ -36,7 +36,7 @@ class TicketDetail(APIView):
 
     def put(self, request, pk, format=None):
         ticket = self.get_object(pk=pk)
-        srlr = TicketSerializer(schedule, data=request.data)
+        srlr = TicketSerializer(ticket, data=request.data)
         if srlr.is_valid():
             srlr.save()
             return Response(srlr.data)
