@@ -14,8 +14,8 @@ class Ticket(models.Model):
     customer_name = models.CharField(max_length=60,
                                      default='Type your name in')
 
-    phone = models.CharField(default='Customer phone number', max_length=200)
-    email = models.CharField(default='Customer email', max_length=200,null=True)
+    customer_phone = models.CharField(default='Customer phone number', max_length=200)
+    customer_email = models.CharField(default='Customer email', max_length=200,null=True)
 
     departing_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name= "Departure", default= True)
     destination = models.ForeignKey(Station, on_delete=models.CASCADE, related_name="destination", default= True)
@@ -32,7 +32,7 @@ class Ticket(models.Model):
                                    blank=True,
                                    null=True)
     seat_number = models.ForeignKey(Seat, on_delete=models.CASCADE)
-    # seat =
+
     price = models.IntegerField('Price (in thousands dong)', default=0)
 
     bought_in = models.DateTimeField(blank=True, null=True)
@@ -42,5 +42,3 @@ class Ticket(models.Model):
 
     def __str__(self):
         return str(self.id)
-
-    
