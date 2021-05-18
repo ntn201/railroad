@@ -10,5 +10,3 @@ class Station(models.Model):
     
     class Meta:
         ordering = ['station_id']
-    
-    
