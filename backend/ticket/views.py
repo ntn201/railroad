@@ -61,16 +61,16 @@ class TicketCreator(APIView):
         seats = body['seat_number']
 
         for s in seats:
-            seat = Seat.objects.get(seat_number=s)
+            seat = Seat.objects.filter(train_name=body['train_name']).get(seat_number=s)
             ticket_data = {
                 'customer_name': body['customer_name'],
                 'customer_phone': body['customer_phone'],
                 'customer_email': body['customer_email'],
                 'ticket_type': body['ticket_type'],
-                'train_name': train,
-                'starting_station': sta,
-                'destination': des,
-                'seat_number': seat,
+                'train_name': train.id,
+                'starting_station': sta.id,
+                'destination': des.id,
+                'seat_number': seat.id,
                 'price': 10,
             }
 
