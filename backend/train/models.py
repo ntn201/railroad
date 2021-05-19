@@ -4,6 +4,7 @@ from station.models import Station
 
 
 class Train(models.Model):
+    id = models.AutoField(primary_key=True)
     train_name = models.CharField(max_length=120)
     route_name = models.ForeignKey(Route, on_delete=models.CASCADE)
     departing_time = models.DateTimeField()

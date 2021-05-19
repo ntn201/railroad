@@ -9,8 +9,9 @@ except ImportError:
 
 # Create your models here.
 class Schedule(models.Model):
+    id = models.AutoField(primary_key=True)
     route_name = models.ForeignKey(Route, on_delete=models.CASCADE)
-    station = models.ForeignKey(Station, on_delete=models.CASCADE, default=-1)
+    station_name = models.ForeignKey(Station, on_delete=models.CASCADE, default="forgoten station")
     arrive_order = models.IntegerField(default=1)
     travel_time = models.IntegerField(default=0)
 

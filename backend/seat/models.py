@@ -4,6 +4,7 @@ from train.models import Train
 
 # Create your models here.
 class Seat(models.Model):
+    id = models.AutoField(primary_key=True)
     train_name = models.ForeignKey(Train, on_delete=models.CASCADE)
     seat_number = models.IntegerField()
     is_taken = models.BooleanField(default=False)

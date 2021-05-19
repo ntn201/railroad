@@ -50,13 +50,4 @@ class ScheduleDetail(APIView):
         schedule.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class AddSchedule(APIView):
-    def get(self, format=None):
-        s = Station.objects.get(id=5)
-        srlr = StationSerializer(s)
-        return Response(srlr.data)
-
-    def post(self, format=None):
-        route = Route.objects.get(route_name="Ha Noi - Lao Cai")
-        stations = 5
         
