@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
+from train.models import Train
 
 class SeatList(APIView):
     def get(self, request, format=None):
@@ -43,4 +44,6 @@ class SeatDetail(APIView):
         seat = self.get_object(pk)
         seat.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 

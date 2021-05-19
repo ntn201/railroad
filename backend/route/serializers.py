@@ -5,4 +5,4 @@ class RouteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Route
-        fields = ['station', 'route_name', 'arrive_order']
+        fields = ['route_name']

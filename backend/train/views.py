@@ -1,10 +1,15 @@
 from django.shortcuts import render
 from .models import Train
 from .serializers import TrainSerializer
+from seat.models import Seat
+from seat.serializers import SeatSerializer
+from route.models import Route
+from route.serializers import RouteSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
+import json
 
 class TrainList(APIView):
     def get(self, request, format=None):
@@ -13,9 +18,11 @@ class TrainList(APIView):
         return Response(srlr.data)
 
     def post(self, request, format=None):
+        request.route_name = Route.objects.get(route_name=request.route_name)
         srlr = TrainSerializer(data=request.data)
         if srlr.is_valid():
             srlr.save()
+            Seat(train_name=srlr, seat_number=1).save()
             return Response(srlr.data, status=status.HTTP_201_CREATED)
         return Response(srlr.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -44,3 +51,30 @@ class TrainDetail(APIView):
         train.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class TrainCreator(APIView):
+    def get(self, request, format=None):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        return Response(body["train_name"])
+
+    
+    def post(self, request, format=None):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        route = Route.objects.get(route_name=body['route_name'])
+        train_data = {
+            'train_name' : body['train_name'],
+            'route_name' : route.id,
+            'departing_time': body['departing_time'],
+            'number_of_seats': body['number_of_seats']  
+        }
+
+        srlr = TrainSerializer(data=train_data)
+        if srlr.is_valid():
+            srlr.save()
+            Seat.createSeat(srlr, srlr)
+            return Response(srlr.data, status=status.HTTP_201_CREATED)
+        return Response(srlr.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+        

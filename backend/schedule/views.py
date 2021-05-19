@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from .models import Schedule
 from .serializers import ScheduleSerializer
+from station.models import Station
+from station.serializers import StationSerializer
+from route.models import Route
+from route.serializers import RouteSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -45,3 +49,14 @@ class ScheduleDetail(APIView):
         schedule = self.get_object(pk)
         schedule.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AddSchedule(APIView):
+    def get(self, format=None):
+        s = Station.objects.get(id=5)
+        srlr = StationSerializer(s)
+        return Response(srlr.data)
+
+    def post(self, format=None):
+        route = Route.objects.get(route_name="Ha Noi - Lao Cai")
+        stations = 5
+        
