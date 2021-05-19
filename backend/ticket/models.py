@@ -22,16 +22,12 @@ class Ticket(models.Model):
         ('One-way', 'One-way'),
         ('Round-trip', 'Round-trip'),
     )
-    ticket_type = models.CharField('ticket type',
-                                   choices=TICKET_TYPE,
-                                   max_length=255,
-                                   blank=True,
-                                   null=True)
+    ticket_type = models.CharField('ticket type', choices=TICKET_TYPE, max_length=255, blank=True, null=True)
     seat_number = models.ForeignKey(Seat, on_delete=models.CASCADE)
 
     price = models.FloatField('Price (in thousands dong)', default=0.0)
 
-    bought_at = models.DateTimeField(blank=True, null=True)
+    bought_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.train_name} - {self.seat_number}"
