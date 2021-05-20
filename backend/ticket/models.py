@@ -2,6 +2,7 @@ from django.db import models
 from station.models import Station
 from seat.models import Seat
 from train.models import Train
+from datetime import datetime
 try:
     from django.utils import timezone
 except ImportError:
@@ -16,21 +17,21 @@ class Ticket(models.Model):
     customer_email = models.CharField(default='Customer email', max_length=200,null=True)
     departing_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name= "Departure", default= True)
     destination = models.ForeignKey(Station, on_delete=models.CASCADE, related_name="destination", default= True)
-    train_name = models.ForeignKey(Train, on_delete=models.CASCADE)
+    train_id = models.ForeignKey(Train, on_delete=models.CASCADE)
 
     TICKET_TYPE = (
         ('One-way', 'One-way'),
-        ('Round-trip', 'Round-trip'),
+        ('Return-trip', 'Return-trip'),
     )
     ticket_type = models.CharField('ticket type', choices=TICKET_TYPE, max_length=255, blank=True, null=True)
     seat_number = models.ForeignKey(Seat, on_delete=models.CASCADE)
 
     price = models.FloatField('Price (in thousands dong)', default=0.0)
 
-    bought_at = models.DateTimeField(auto_now=True)
+    bought_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.train_name} - {self.seat_number}"
+        return f"{self.train_id} - {self.seat_number}"
 
 
 

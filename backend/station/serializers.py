@@ -6,4 +6,4 @@ class StationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Station
-        fields = ['station_name', 'station_distance']
+        fields = ['id', 'station_name', 'station_distance']

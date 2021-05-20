@@ -49,23 +49,16 @@ class TrainDetail(APIView):
         train.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class TrainCreator(APIView):
-    def get(self, request, format=None):
-        # body_unicode = request.body.decode('utf-8')
-        # body = json.loads(body_unicode)
-        return Response()
-
-    
+class TrainCreator(APIView):    
     def post(self, request, format=None):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        route = Route.objects.get(route_name=body['route_name'])
         train_data = {
             'train_name' : body['train_name'],
-            'route_name' : route.id,
+            'route_id' : body["route_id"],
             'departing_time': body['departing_time'],
-            'number_of_seats': body['number_of_seats']  
+            'number_of_seats': body['number_of_seats']
         }
 
         srlr = TrainSerializer(data=train_data)
