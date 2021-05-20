@@ -67,6 +67,7 @@ class TicketCreator(APIView):
         for s in seats:
             if s > 56:
                 return Response(f"We don't have that seat number please choose another")
+
             seat = Seat.objects.filter(train_id=train).get(seat_number=s)
             if seat.is_taken:
                 return Response(f"Seat number {s} is already taken.")
@@ -79,8 +80,7 @@ class TicketCreator(APIView):
                 'train_id': train,
                 'starting_station': sta.id,
                 'destination': des.id,
-                'seat_number': seat.id,
-                'price': price,
+                'seat_number': seat.id
             }
             srlr = TicketSerializer(data=ticket_data)
             if srlr.is_valid():
