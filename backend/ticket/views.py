@@ -59,7 +59,7 @@ class TicketCreator(APIView):
         train = Train.objects.get(train_name=body['train_name']).id
         sta = Station.objects.get(station_name=body['starting_station'])
         des = Station.objects.get(station_name=body['destination'])
-        price = abs(des.station_distance - sta.station_distance)
+        price = des.station_distance - sta.station_distance
         if body["ticket_type"] == "Return-trip":
             price = price * 2
         seats = body['seat_number']
@@ -80,7 +80,8 @@ class TicketCreator(APIView):
                 'train_id': train,
                 'starting_station': sta.id,
                 'destination': des.id,
-                'seat_number': seat.id
+                'seat_number': seat.id,
+                'price': price
             }
             srlr = TicketSerializer(data=ticket_data)
             if srlr.is_valid():

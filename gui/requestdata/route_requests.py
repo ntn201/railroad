@@ -10,9 +10,15 @@ def get_all_route():
     all_routes = json.loads(get_all_routes.text)
     return all_routes
 
+def get_all_route_name():
+    get_all_routes = requests.get(url="http://127.0.0.1:8000/route/")
+    all_routes = json.loads(get_all_routes.text)
+    routes = []
+    for route in all_routes:
+        routes.append(route.get("route_name"))
+    return routes    
+
 def get_route(id):
     get_route_by_id = requests.get(url=f"http://127.0.0.1:8000/route/{id}/")
     route = json.loads(get_route_by_id.text)
-    return route
-
-print(get_route(1))
+    return route.get("route_name")
