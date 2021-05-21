@@ -1,6 +1,7 @@
 import requests
 import json
 
+from schedule_requests import get_schedule
 
 train_fields = ['id', 'train_name', 'train_distance']
 train_url = "http://127.0.0.1:8000/train/"
@@ -26,4 +27,6 @@ def create_train(request):
     create_train = requests.post(url="http://127.0.0.1:8000/train/create/", json=request)
     return create_train.status_code
 
-print(get_train(6))
+get_route(get_train(6).get("route_id"))
+
+print()

@@ -74,8 +74,8 @@ class TicketCreator(APIView):
             Seat.takeSeat(train, train, s)
             ticket_data = {
                 'customer_name': body['customer_name'],
+                'customer_id': body['customer_id'],
                 'customer_phone': body['customer_phone'],
-                'customer_email': body['customer_email'],
                 'ticket_type': body['ticket_type'],
                 'train_id': train,
                 'starting_station': sta.id,

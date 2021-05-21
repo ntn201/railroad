@@ -13,8 +13,8 @@ except ImportError:
 class Ticket(models.Model):
     id = models.AutoField(primary_key=True)
     customer_name = models.CharField(max_length=60, default='Type your name in')
+    customer_id = models.CharField(max_length=10, default='0000000000')
     customer_phone = models.CharField(default='Customer phone number', max_length=200)
-    customer_email = models.CharField(default='Customer email', max_length=200,null=True)
     departing_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name= "Departure", default= True)
     destination = models.ForeignKey(Station, on_delete=models.CASCADE, related_name="destination", default= True)
     train_id = models.ForeignKey(Train, on_delete=models.CASCADE)

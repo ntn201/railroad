@@ -18,8 +18,8 @@ def get_ticket(id):
 
 ticket_form = {   
     "customer_name": "Vinh Nguyen",
+    "customer_id": "0000000001",
     "customer_phone": "12346",
-    "customer_email": "thai@gmail.com",
     "ticket_type": "Return-trip",                   # Return-trip or One-way 
     "train_name": "HN-SG1",     
     "starting_station": "Ha Noi",                   # Reference Station
