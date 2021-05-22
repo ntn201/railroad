@@ -2,15 +2,84 @@ import requests
 import json
 from train_requests import get_train
 
-ticket_fields = ['id', 'ticket_name', 'ticket_distance']
+ticket_fields = ['id', 'customer_name', 'customer_id', 'customer_phone', 'departing_station', 'destination', 'train_id', 'ticket_type', 'seat_number', 'price', 'bought_at']
 ticket_url = "http://127.0.0.1:8000/ticket/"
 
+
+# Basic requests
 def get_all_ticket():
     get_all_tickets = requests.get(url="http://127.0.0.1:8000/ticket/")
     all_tickets = json.loads(get_all_tickets.text)
+    tickets = []
+    for ticket in all_tickets:
+        ticket_fields = {
+            'id': ticket.get('id'), 
+            'customer_name': ticket.get('customer_name'), 
+            'customer_id': ticket.get('customer_id'), 
+            'customer_phone': ticket.get('customer_phone'), 
+            'departing_station': ticket.get('departing_station'), 
+            'destination': ticket.get('destination'), 
+            'train_id': ticket.get('train_id'), 
+            'ticket_type': ticket.get('ticket_type'), 
+            'seat_number': ticket.get('seat_number'), 
+            'price': ticket.get('price'), 
+            'bought_at': ticket.get('bought_at')
+        }
+        tickets.append(ticket_fields)
     return all_tickets
 
 def get_ticket(id):
+    get_ticket_by_id = requests.get(url=f"http://127.0.0.1:8000/ticket/{id}/")
+    ticket = json.loads(get_ticket_by_id.text)
+    ticket = {
+            'id': ticket.get('id'), 
+            'customer_name': ticket.get('customer_name'), 
+            'customer_id': ticket.get('customer_id'), 
+            'customer_phone': ticket.get('customer_phone'), 
+            'departing_station': ticket.get('departing_station'), 
+            'destination': ticket.get('destination'), 
+            'train_id': ticket.get('train_id'), 
+            'ticket_type': ticket.get('ticket_type'), 
+            'seat_number': ticket.get('seat_number'), 
+            'price': ticket.get('price'), 
+            'bought_at': ticket.get('bought_at')
+        }
+    return ticket
+
+ticket_form = {
+    "customer_name": "Vinh Nguyen",
+    "customer_id": "0000000001",
+    "customer_phone": "12346",
+    "ticket_type": "Return-trip",                   # Return-trip or One-way 
+    "train_name": "HN-SG1",     
+    "starting_station": "Ha Noi",                   # Reference Station
+    "destination": "Sai Gon",                       # Reference Station
+    "seat_number": [10,11]                           # Is an array of integer
+}
+
+def create_ticket(request):
+    create_ticket = requests.post(url="http://127.0.0.1:8000/ticket/create/", json=request)
+    return create_ticket.text
+
+
+# Custom requests
+def get_all_ticket_info():
+    get_all_tickets = requests.get(url="http://127.0.0.1:8000/ticket/")
+    all_tickets = json.loads(get_all_tickets.text)
+    tickets = []
+    for ticket in all_tickets:
+        ticket = {
+            "customer_name": ticket.get("customer_name"),
+            "customer_id": ticket.get("customer_id"),
+            "customer_phone": ticket.get("customer_phone"),
+            "price": ticket.get("price"),
+            "train_name": get_train(ticket.get("train_id")).get("train_name"),
+            "seat_number": ticket.get("seat_number")
+        }
+        tickets.append(ticket)
+    return tickets
+
+def get_ticket_info(id):
     get_ticket_by_id = requests.get(url=f"http://127.0.0.1:8000/ticket/{id}/")
     ticket = json.loads(get_ticket_by_id.text)
     ticket_info = {
@@ -22,21 +91,3 @@ def get_ticket(id):
         "seat_number": ticket.get("seat_number")
     }
     return ticket_info
-
-
-ticket_form = {
-    "customer_name": "Vinh Nguyen",
-    "customer_id": "0000000001",
-    "customer_phone": "12346",
-    "ticket_type": "Return-trip",                   # Return-trip or One-way 
-    "train_name": "HN-SG1",     
-    "starting_station": "Ha Noi",                   # Reference Station
-    "destination": "Sai Gon",                       # Reference Station
-    "seat_number": [10,11]                              # Is an array of integer
-}
-
-def create_ticket(request):
-    create_ticket = requests.post(url="http://127.0.0.1:8000/ticket/create/", json=request)
-    return create_ticket.text
-
-print(get_ticket(4))

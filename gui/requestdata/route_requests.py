@@ -5,11 +5,29 @@ import json
 route_fields = ['id', 'route_name']
 route_url = "http://127.0.0.1:8000/route/"
 
+#Basic requests
 def get_all_route():
     get_all_routes = requests.get(url="http://127.0.0.1:8000/route/")
     all_routes = json.loads(get_all_routes.text)
-    return all_routes
+    routes = []
+    for route in all_routes:
+        route = {
+            'id': route.get('id'), 
+            'route_name': route.get('route_name')
+        }
+        routes.append(route)
+    return routes
 
+def get_route(id):
+    get_route_by_id = requests.get(url=f"http://127.0.0.1:8000/route/{id}/")
+    route = json.loads(get_route_by_id.text)
+    route = {
+            'id': route.get('id'), 
+            'route_name': route.get('route_name')
+        }
+    return route.get("route_name")
+
+# Custom requests
 def get_all_route_name():
     get_all_routes = requests.get(url="http://127.0.0.1:8000/route/")
     all_routes = json.loads(get_all_routes.text)
@@ -17,8 +35,4 @@ def get_all_route_name():
     for route in all_routes:
         routes.append(route.get("route_name"))
     return routes    
-
-def get_route(id):
-    get_route_by_id = requests.get(url=f"http://127.0.0.1:8000/route/{id}/")
-    route = json.loads(get_route_by_id.text)
-    return route.get("route_name")
+    
