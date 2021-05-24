@@ -48,19 +48,26 @@ def get_ticket(id):
 
 ticket_form = {
     "customer_name": "Vinh Nguyen",
-    "customer_id": "0000000001",
+    "customer_id": "1234567890",
     "customer_phone": "12346",
     "ticket_type": "Return-trip",                   # Return-trip or One-way 
-    "train_name": "HN-SG1",     
-    "starting_station": "Ha Noi",                   # Reference Station
-    "destination": "Sai Gon",                       # Reference Station
-    "seat_number": [10,11]                           # Is an array of integer
+    "train_id": 1,                                  # Train id
+    "departing_id": 2,                              # Station id
+    "destination_id": 5,                            # Station id
+    "seat_number": [3]                              # Is an array of integer
 }
 
 def create_ticket(request):
     create_ticket = requests.post(url="http://127.0.0.1:8000/ticket/create/", json=request)
     return create_ticket.text
 
+def update_ticket(request, id):
+    update_ticket = requests.put(url=f"http://127.0.0.1:8000/ticket/{id}/", json=request)
+    return update_ticket.text
+
+def delete_ticket(id):
+    delete_ticket = requests.delete(url=f"http://127.0.0.1:8000/ticket/{id}/")
+    return f"Ticket id {id} is deleted"
 
 # Custom requests
 def get_all_ticket_info():
@@ -91,3 +98,5 @@ def get_ticket_info(id):
         "seat_number": ticket.get("seat_number")
     }
     return ticket_info
+
+print(create_ticket(ticket_form))

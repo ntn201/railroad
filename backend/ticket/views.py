@@ -56,10 +56,10 @@ class TicketCreator(APIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        train = Train.objects.get(train_name=body['train_name']).id
-        sta = Station.objects.get(station_name=body['starting_station'])
-        des = Station.objects.get(station_name=body['destination'])
-        price = des.station_distance - sta.station_distance
+        # train = Train.objects.get(train_name=body['train_name']).id
+        # dep = Station.objects.get(station_name=body['departing_station'])
+        # des = Station.objects.get(station_name=body['destination'])
+        price = abs(Station.objects.get(id=body['destination_id']).station_distance - Station.objects.get(id=body['departing_id']).station_distance)
         if body["ticket_type"] == "Return-trip":
             price = price * 2
         seats = body['seat_number']
@@ -68,18 +68,18 @@ class TicketCreator(APIView):
             if s > 56:
                 return Response(f"We don't have that seat number please choose another")
 
-            seat = Seat.objects.filter(train_id=train).get(seat_number=s)
+            seat = Seat.objects.filter(train_id=body['train_id']).get(seat_number=s)
             if seat.is_taken:
                 return Response(f"Seat number {s} is already taken.")
-            Seat.takeSeat(train, train, s)
+            Seat.takeSeat(body['train_id'], body['train_id'], s)
             ticket_data = {
                 'customer_name': body['customer_name'],
                 'customer_id': body['customer_id'],
                 'customer_phone': body['customer_phone'],
                 'ticket_type': body['ticket_type'],
-                'train_id': train,
-                'starting_station': sta.id,
-                'destination': des.id,
+                'train_id': body['train_id'],
+                'departing_id': body['departing_id'],
+                'destination_id': body['destination_id'],
                 'seat_number': seat.id,
                 'price': price
             }
@@ -88,6 +88,5 @@ class TicketCreator(APIView):
                 srlr.save()
             
         return Response(srlr.data, status=status.HTTP_201_CREATED)
-        return Response(srlr.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

@@ -15,8 +15,8 @@ class Ticket(models.Model):
     customer_name = models.CharField(max_length=60, default='Type your name in')
     customer_id = models.CharField(max_length=10, default='0000000000')
     customer_phone = models.CharField(default='Customer phone number', max_length=200)
-    departing_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name= "Departure", default= True)
-    destination = models.ForeignKey(Station, on_delete=models.CASCADE, related_name="destination", default= True)
+    departing_id = models.ForeignKey(Station, on_delete=models.CASCADE, related_name= "Departure", default= True)
+    destination_id = models.ForeignKey(Station, on_delete=models.CASCADE, related_name="destination", default= True)
     train_id = models.ForeignKey(Train, on_delete=models.CASCADE)
 
     TICKET_TYPE = (

@@ -48,6 +48,14 @@ def create_train(request):
     create_train = requests.post(url="http://127.0.0.1:8000/train/create/", json=request)
     return create_train.status_code
     
+def update_train(request, id):
+    update_train = requests.put(url=f"http://127.0.0.1:8000/train/{id}/", json=request)
+    return update_train.text
+
+def delete_train(id):
+    delete_train = requests.delete(url=f"http://127.0.0.1:8000/train/{id}/")
+    return f"train id {id} is deleted"
+
 
 # Custom requests
 def get_all_train_info():
