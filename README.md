@@ -1,9 +1,9 @@
-Final Project - Advanced Programming in Python
-USTH - ICT - YEAR 2 - 2020-2021
+Final Project - Advanced Programming in Python.
+USTH - ICT - YEAR 2 - 2020-2021.
 
 Topic: Train Management System
 
-Group 11
+Group 11:
 - Nguyễn Trấn Nguyên
 - Nguyễn Quang Vinh
 - Nguyễn Anh Quân
