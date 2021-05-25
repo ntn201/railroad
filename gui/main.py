@@ -399,10 +399,9 @@ def btnavailabel(seated):
     for i in seated:
         userseatlist[i-1].config(image=redimg)
 def changecolor(seatno):
-    print(seatno)
-    userseatlist[seatno].config(image=redimg)
-    print(userseatlist[seatno].cget("text"))
-    chosenseat.append(userseatlist[seatno].cget("text"))
+    userseatlist[seatno].button.config(image=redimg)
+    print(userseatlist[seatno].button.cget("text"))
+    chosenseat.append(userseatlist[seatno].button.cget("text"))
 adminseatlist = []
 def adminbtnavailabel(seated):
     for i in seated:
@@ -576,23 +575,29 @@ greenimg = ImageTk.PhotoImage(Image.open('images/green.png').resize((54, 41), Im
 redimg = ImageTk.PhotoImage(Image.open('images/red.png').resize((54, 41), Image.ANTIALIAS))
 barriel = ImageTk.PhotoImage(Image.open('images/barriel.png').resize((40, 90), Image.ANTIALIAS))
 #Seat Left Display
+class userleftseat():
+    def __init__(self, index):
+        self.button = Button(seatleftframe, image=greenimg, borderwidth=0, text=i + 1, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(index))
 for i in range(28):
-    button = Button(seatleftframe, image=greenimg, borderwidth=0, text=i + 1, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(i))
+    button = userleftseat(i)
     userseatlist.append(button)
 barriel1label = Label(seatmidframe, image=barriel, bg=lightedgrey, bd=0)
 barriel2label = Label(seatmidframe, image=barriel, bg=lightedgrey, bd=0)
 barriel1label.pack()
 barriel2label.pack()
 #Seat Right Display
+class userrightseat():
+    def __init__(self, index):
+        self.button = Button(seatrightframe, image=greenimg, borderwidth=0, text=i + 1, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(index))
 for i in range(28,56):
-    button = Button(seatrightframe, image=greenimg, borderwidth=0, text=i + 1, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(i))
+    button = userrightseat(i)
     userseatlist.append(button)
 #Function Seated Button
 def arrange_list(userseatlist, start, end):
     k = 0
     j = 0
     for i in range(start, end):
-        userseatlist[i].grid(row=i%4, column=j)
+        userseatlist[i].button.grid(row=i%4, column=j)
         k += 1
         if k == 4:
             j += 1
@@ -778,17 +783,23 @@ adminseatrightframe = LabelFrame(adminseatcontainerframe, bd=0, bg=lightedgrey)
 adminseatleftframe.grid(row=0, column=0)
 adminseatmidframe.grid(row=0, column=1)
 adminseatrightframe.grid(row=0, column=2)
+class adminleftseat():
+    def __init__(self, index):
+        self.button = Button(adminseatleftframe, image=greenimg, borderwidth=0, text=i + 1, fg='white', font=medium_font, compound=CENTER)
 for i in range(28):
-    button = Button(adminseatleftframe, image=greenimg, borderwidth=0, text=i + 1, fg='white', font=medium_font, compound=CENTER)
+    button = adminleftseat(i)
     adminseatlist.append(button)
+class adminrightseat():
+    def __init__(self, index):
+        self.button = Button(adminseatrightframe, image=greenimg, borderwidth=0, text=i + 1, fg='white', font=medium_font, compound=CENTER)
 for i in range(28,56):
-    button = Button(adminseatrightframe, image=greenimg, borderwidth=0, text=i + 1, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(i))
+    button = adminrightseat(i)
     adminseatlist.append(button)
 def arrange_list(adminseatlist, start, end):
     k = 0
     j = 0
     for i in range(start, end):
-        adminseatlist[i].grid(row=i%4, column=j)
+        adminseatlist[i].button.grid(row=i%4, column=j)
         k += 1
         if k == 4:
             j += 1
