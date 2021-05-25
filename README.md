@@ -11,5 +11,5 @@ Group 11
 - Nguyễn Tương Quỳnh
 
 Links:
-- Link for Slides: bit.lt/TMSystem2021
-- Link for Report (in LaTex): bit.lt/TMSys2021
+- Link for Slides: bit.ly/TMSystem2021
+- Link for Report (in LaTex): bit.ly/TMSys2021
