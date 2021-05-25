@@ -2,6 +2,10 @@ from tkinter import *
 from tkinter import ttk
 from PIL import ImageTk, Image
 from datetime import datetime
+from requestdata.train_requests import *
+from requestdata.ticket_requests import *
+from requestdata.route_requests import  *
+from requestdata.station_requests import  *
 root = Tk()
 root.title('Good Job!')
 root.geometry('1000x800') #wxh
@@ -21,13 +25,48 @@ large_font = ('Verdana',23)
 med_large_font = ('Verdana',17)
 medium_font = ('Verdana',15)
 small_font = ('Verdana',11)
+#Stuff Function
+def reduce_list(fields, poplist):
+    a = []
+    for i in range (len(fields)):
+        arrtmp = list(fields[i].values())
+        a.append(arrtmp)
+    for i in range(0, len(a)):
+        count = 0
+        for pop in poplist:
+            if count==0:
+                remove=pop
+                a[i].pop(remove)
+                count = count + 1
+            elif count!=0:
+                remove=pop-count
+                a[i].pop(remove)
+                count = count + 1
+    return a
+def refresh_list(list):
+    for i in range(0, len(list)):
+        list.pop()
+#Lists
+resultlisttrain = reduce_list(get_all_train_info(), poplist=[])
+trainsearch = reduce_list(get_all_train(), poplist=[])
+customersearch = reduce_list(get_all_ticket(), poplist=[4,5,7,10])
+route = reduce_list(get_all_route(), poplist=[])
+userseated = []
+chosenseat = []
+getstation = get_all_station()
+idstationlist = []
+usertrainid= []
+for i in range(0, len(getstation)):
+    idstationlist.append(getstation[i]["id"])
+print(usertrainid)
+getalltrain = get_all_train()
 #function homebodyframe/findbodyframe/findseatbodyframe
 def homepage():
     findbodyframe.pack_forget()
     findseatbodyframe.pack_forget()
     userinfobodyframe.pack_forget()
     adminbodyframe.pack_forget()
-    adminseatcontainerframe.grid_forget()
+    adminseatcontainerframe.pack_forget()
     firstpageframe.pack()
     secondpageframe.pack_forget()
     thirdpageframe.pack_forget()
@@ -38,18 +77,40 @@ def findtrip():
     findseatbodyframe.pack_forget()
     userinfobodyframe.pack_forget()
     adminbodyframe.pack_forget()
-    adminseatcontainerframe.grid_forget()
+    adminseatcontainerframe.pack_forget()
     firstpageframe.pack()
     secondpageframe.pack_forget()
     thirdpageframe.pack_forget()
     traininfodetailframe.pack_forget()
+    trainsearch = reduce_list(get_all_train(), poplist=[])
+    refresh_list(chosenseat)
+    refresh_list(usertrainid)
+    for i in range(0, len(trainsearch)):
+        usertrainid.append(trainsearch[i][0])
+    trainnamecombobox['values'] = usertrainid
+    print(usertrainid)
+    trainnamecombobox.grid_forget()
+    trainnamecombobox.grid(row=8, column=1, pady=5)
     findbodyframe.pack(fill=X, ipady=50)
+def userselecttrainname(event):
+    global userseated
+    id = trainnamecombobox.current()+1
+    tmprecord = get_train_info(id)
+    for i in range(0, len(userseatlist)):
+        userseatlist[i].config(image=greenimg)
+    refresh_list(userseated)
+    for i in range (0, len(userseated)):
+        userseated.pop()
+    userseated = tmprecord['taken_seats']
+    print(userseated)
 def findseat():
+    global userseated
     homebodyframe.pack_forget()
     findbodyframe.pack_forget()
     adminbodyframe.pack_forget()
     traininfodetailframe.pack_forget()
-    adminseatcontainerframe.grid_forget()
+    adminseatcontainerframe.pack_forget()
+    btnavailabel(userseated)
     findseatbodyframe.pack(fill=X, ipady=40)
 def userinfo():
     findseatbodyframe.pack_forget()
@@ -60,32 +121,77 @@ def payment():
 def completed():
     secondpageframe.pack_forget()
     thirdpageframe.pack()
+def usersubmit():
+    request = {
+    "customer_name": f"{fullnameentry.get()}",
+    "customer_id": f"{idpassportentry.get()}",
+    "customer_phone": f"{phonenumberentry.get()}",
+    "ticket_type": "Return-trip",
+    "train_id": trainnamecombobox.get(), #id is int
+    "departing_id": startcombobox.get(), #id is int
+    "destination_id": desticombobox.get(),    #id is int
+    "seat_number": chosenseat # [4,6]
+    }
+    create_ticket(request)
+    def clear_all_user_entry():
+        startcombobox.delete(0, END)
+        desticombobox.delete(0, END)
+        trainnamecombobox.delete(0, END)
+        fullnameentry.delete(0, END)
+        emailentry.delete(0, END)
+        phonenumberentry.delete(0, END)
+        idpassportentry.delete(0, END)
+        emailconfirmentry.delete(0, END)
+    clear_all_user_entry()
+    homepage()
 def admin():
     homebodyframe.pack_forget()
     findbodyframe.pack_forget()
     findseatbodyframe.pack_forget()
     userinfobodyframe.pack_forget()
     traininfodetailframe.pack_forget()
-    adminseatcontainerframe.grid_forget()
+    adminseatcontainerframe.pack_forget()
     adminbodyframe.pack(fill=X, ipady=150)
 def login():
     if usernameloginentry.get() == "admin" and passwordloginentry.get() == 'admin':
         centerframe.destroy()
         sidebarframe.pack(fill=BOTH, side=LEFT)
         dashboarddetailframe.pack(fill=BOTH, expand=YES, side=RIGHT)
+        dashboard()
     else:
         erropassLabel.config(text='Wrong Input, Try Again!', bg="red")
+traintripimg = ImageTk.PhotoImage(Image.open('images/traintrip.png').resize((240, 171), Image.ANTIALIAS))
 def dashboard():
-    adminseatcontainerframe.grid_forget()
+    adminseatcontainerframe.pack_forget()
     traininfodetailframe.pack_forget()
     dashboardbtn.config(bg=weightedblue)
     traininfobtn.config(bg=lightedblue)
     aboutbtn.config(bg=lightedblue)
     dashboarddetailframe.pack(fill=BOTH, expand=YES, side=RIGHT)
-    currenttrainframe.grid(row=0, column=0)
-def adminfindseat():
-    currenttrainframe.grid_forget()
-    adminseatcontainerframe.grid(row=0, column=0, pady=200)
+    my_canvas.pack(side = LEFT, fill = BOTH, expand = 1)
+    my_scrollbar.pack(side = RIGHT, fill = Y)
+    #refresh list
+    resultlisttrain = reduce_list(get_all_train_info(), poplist=[])
+    # Remove last listtraincurrent
+    for i in range(0, 6 - len(resultlisttrain)):
+        listtraincurrent.pop()
+    for index, x in enumerate(listtraincurrent):
+        x.frame.pack()
+        temp1 = resultlisttrain[index][0]
+        temp2 = resultlisttrain[index][2]
+        temp3 = resultlisttrain[index][1]
+        temp4 = resultlisttrain[index][3]
+        x.trainnamelabel.config(text=temp1)
+        x.traintimelabel.config(text=temp2)
+        x.departlabel.config(text=temp3)
+        x.availabel.config(text=temp4)
+def adminfindseat(seated):
+    my_canvas.pack_forget()
+    my_scrollbar.pack_forget()
+    for i in range(0, len(adminseatlist)):
+        adminseatlist[i].config(image=greenimg)
+    adminbtnavailabel(seated)
+    adminseatcontainerframe.pack(fill=BOTH, expand=YES)
 def traininfo():
     adminseatcontainerframe.grid_forget()
     dashboardbtn.config(bg=lightedblue)
@@ -93,169 +199,245 @@ def traininfo():
     aboutbtn.config(bg=lightedblue)
     dashboarddetailframe.pack_forget()
     traininfodetailframe.pack(fill=BOTH, expand=YES, side=RIGHT)
-    train()
-def train():
+    traintab()
+def traintab():
     trainbtn.config(bg=weightedgrey)
     customerbtn.config(bg=bluegrey)
     customerfindingframe.pack_forget()
     trainfindingframe.pack(fill=BOTH, expand=YES)
-result = [["SE1", "Route1", "3h", "4h", "56/56"], ["SE2", "Route2", "5h", "6h", "56/56"]]
-def edit(index):
-    edittrain = Tk()
-    edittrain.geometry('450x280')  # wxh
-    edittrain.resizable(False, False)
-    print(index)
-    editnamelabel = Label(edittrain, text="Name", font=medium_font)
-    editnamelabel.grid(row=0, column=0, padx=5, pady=10)
-    editnameentry = Entry(edittrain, font=medium_font)
-    editnameentry.insert(0, result[index][0])
-    editnameentry.grid(row=0, column=1, padx=5, pady=10)
-    editroutelabel = Label(edittrain, text="Route", font=medium_font)
-    editroutelabel.grid(row=1, column=0, padx=5, pady=10)
-    editrouteentry = Entry(edittrain, font=medium_font)
-    editrouteentry.insert(0, result[index][1])
-    editrouteentry.grid(row=1, column=1, padx=5, pady=10)
-    editdeptimelabel = Label(edittrain, text="Dep. Time", font=medium_font)
-    editdeptimelabel.grid(row=2, column=0, padx=5, pady=10)
-    editdeptimeentry = Entry(edittrain, font=medium_font)
-    editdeptimeentry.insert(0, result[index][2])
-    editdeptimeentry.grid(row=2, column=1, padx=5, pady=10)
-    editarrtimelabel = Label(edittrain, text="Arr. Time", font=medium_font)
-    editarrtimelabel.grid(row=3, column=0, padx=5, pady=10)
-    editarrtimeentry = Entry(edittrain, font=medium_font)
-    editarrtimeentry.insert(0, result[index][3])
-    editarrtimeentry.grid(row=3, column=1, padx=5, pady=10)
-    saveupdatebtn = Button(edittrain, text="Save", bg=green, fg='white', font=medium_font)
-    saveupdatebtn.grid(row=4, columnspan=2, pady=10)
-
-def listtrain():
-    editbtn = []
-    editbtn1 = Button(traintableframe, text="EDIT 1" , bg=blue, fg='white', font=small_font,
-                    command=lambda: edit(0))
-    editbtn2 = Button(traintableframe, text="EDIT 2" , bg=blue, fg='white', font=small_font,
-                    command=lambda: edit(1))
-    editbtn3 = Button(traintableframe, text="EDIT 3" , bg=blue, fg='white', font=small_font,
-                    command=lambda: edit(2))
-    editbtn4 = Button(traintableframe, text="EDIT 4" , bg=blue, fg='white', font=small_font,
-                    command=lambda: edit(3))
-    editbtn5 = Button(traintableframe, text="EDIT 5" , bg=blue, fg='white', font=small_font,
-                    command=lambda: edit(4))
-    editbtn6 = Button(traintableframe, text="EDIT 6" , bg=blue, fg='white', font=small_font,
-                    command=lambda: edit(5))
-    editbtn.append((editbtn1))
-    editbtn.append((editbtn2))
-    editbtn.append((editbtn3))
-    editbtn.append((editbtn4))
-    editbtn.append((editbtn5))
-    editbtn.append((editbtn6))
-    for index, x in enumerate(result):
-        rowindex = index+1
-        idtrain = str(x[0])
-        num = 0
-        editbtn[index].grid(row=rowindex, column=5)
-        for y in x:
-            lookup_label = Label(traintableframe, text=y, bg='white', font=medium_font)
-            lookup_label.grid(row=rowindex, column=num)
-            num += 1
-resultcustomer = [["Quynh", "123", "quynh@gmail.com", "180.000", "SE1"], ["Quan", "2902", "quan@gmail.com", "250.000", "SE5"]]
-def editcustomer(index):
-    editcustomer = Tk()
-    editcustomer.geometry('450x280')  # wxh
-    editcustomer.resizable(False, False)
-    print(index)
-    editnamelabel = Label(editcustomer, text="Name", font=medium_font)
-    editnamelabel.grid(row=0, column=0, padx=5, pady=10)
-    editnameentry = Entry(editcustomer, font=medium_font)
-    editnameentry.insert(0, resultcustomer[index][0])
-    editnameentry.grid(row=0, column=1, padx=5, pady=10)
-    editpassportlabel = Label(editcustomer, text="ID/Passport", font=medium_font)
-    editpassportlabel.grid(row=1, column=0, padx=5, pady=10)
-    editpassportentry = Entry(editcustomer, font=medium_font)
-    editpassportentry.insert(0, resultcustomer[index][1])
-    editpassportentry.grid(row=1, column=1, padx=5, pady=10)
-    editcontactlabel = Label(editcustomer, text="Contact", font=medium_font)
-    editcontactlabel.grid(row=2, column=0, padx=5, pady=10)
-    editcontactentry = Entry(editcustomer, font=medium_font)
-    editcontactentry.insert(0, resultcustomer[index][2])
-    editcontactentry.grid(row=2, column=1, padx=5, pady=10)
-    editpricelabel = Label(editcustomer, text="Price", font=medium_font)
-    editpricelabel.grid(row=3, column=0, padx=5, pady=10)
-    editpriceentry = Entry(editcustomer, font=medium_font)
-    editpriceentry.insert(0, resultcustomer[index][3])
-    editpriceentry.grid(row=3, column=1, padx=5, pady=10)
-    edittrainnamelabel = Label(editcustomer, text="Train Name", font=medium_font)
-    edittrainnamelabel.grid(row=3, column=0, padx=5, pady=10)
-    edittrainnameentry = Entry(editcustomer, font=medium_font)
-    edittrainnameentry.insert(0, resultcustomer[index][4])
-    edittrainnameentry.grid(row=3, column=1, padx=5, pady=10)
-    saveupdatebtn = Button(editcustomer, text="Save", bg=green, fg='white', font=medium_font)
-    saveupdatebtn.grid(row=4, columnspan=2, pady=10)
-def listcustomer():
-    editbtn = []
-    editbtn1 = Button(customertableframe, text="EDIT 1", bg=blue, fg='white', font=small_font,
-                      command=lambda: editcustomer(0))
-    editbtn2 = Button(customertableframe, text="EDIT 2", bg=blue, fg='white', font=small_font,
-                      command=lambda: editcustomer(1))
-    editbtn3 = Button(customertableframe, text="EDIT 3", bg=blue, fg='white', font=small_font,
-                      command=lambda: editcustomer(2))
-    editbtn4 = Button(customertableframe, text="EDIT 4", bg=blue, fg='white', font=small_font,
-                      command=lambda: editcustomer(3))
-    editbtn5 = Button(customertableframe, text="EDIT 5", bg=blue, fg='white', font=small_font,
-                      command=lambda: editcustomer(4))
-    editbtn6 = Button(customertableframe, text="EDIT 6", bg=blue, fg='white', font=small_font,
-                      command=lambda: editcustomer(5))
-    editbtn.append((editbtn1))
-    editbtn.append((editbtn2))
-    editbtn.append((editbtn3))
-    editbtn.append((editbtn4))
-    editbtn.append((editbtn5))
-    editbtn.append((editbtn6))
-    for index, x in enumerate(resultcustomer):
-        rowindex = index + 1
-        idtrain = str(x[0])
-        num = 0
-        editbtn[index].grid(row=rowindex, column=5)
-        for y in x:
-            lookup_label = Label(customertableframe, text=y, bg='white', font=medium_font)
-            lookup_label.grid(row=rowindex, column=num)
-            num += 1
 def newtrain():
     #New Window for Add Train
-    trainwindow = Tk()
-    trainwindow.geometry('450x250')  # wxh
-    trainwindow.resizable(False, False)
+    newtrainwindow = Tk()
+    newtrainwindow.geometry('450x450')  # wxh
+    newtrainwindow.resizable(False, False)
+
+    def submitupdatetrain():
+        request = {
+        "route_id": f"{newroutecombobox.get()}",
+        "train_name": f"{newnameentry.get()}",
+        "departing_time": f"{newdeparttimeentry.get()}",
+        "number_of_seats": 56
+        }
+        create_train(request)
+        newtrainwindow.destroy()
     # Create a Label
-    title_label = Label(trainwindow, text="Add Train", font=med_large_font)
+    title_label = Label(newtrainwindow, text="Add Train", font=med_large_font)
     title_label.grid(row=0, column=0, columnspan=2, pady=10)
 
     # Create Main Form To Ente Data
-    newnamelabel = Label(trainwindow, text="Name", font=medium_font)
+    newnamelabel = Label(newtrainwindow, text="Name", font=medium_font)
     newnamelabel.grid(row=1, column=0, sticky=W, padx=10)
 
-    newroutelabel = Label(trainwindow, text="Route", font=medium_font)
+    newroutelabel = Label(newtrainwindow, text="Route", font=medium_font)
     newroutelabel.grid(row=2, column=0, sticky=W, padx=10)
-    newdeparttimelabel = Label(trainwindow, text="Depature Time", font=medium_font)
+    newdeparttimelabel = Label(newtrainwindow, text="Depature Time", font=medium_font)
     newdeparttimelabel.grid(row=3, column=0, sticky=W, padx=10)
     # Create Entry Boxes
-    newnameentry = Entry(trainwindow, bd=0, highlightthickness=2, highlightbackground=blue, font=medium_font)
+    newnameentry = Entry(newtrainwindow, bd=0, highlightthickness=2, highlightbackground=blue, font=medium_font)
     newnameentry.grid(row=1, column=1, padx=10)
-    n = StringVar()
-    newroutecombobox = ttk.Combobox(trainwindow,  width = 18, font=medium_font, textvariable=n)
-    newroutecombobox['values'] = (' SE1',
-                              ' SE2',
-                              ' SE3',
-                              ' SE4',
-                              ' SE5',
-    )
+    trainname = StringVar()
+    newroutecombobox = ttk.Combobox(newtrainwindow,  width = 18, font=medium_font, textvariable=trainname)
+    idroute = []
+    for i in range(0, len(route)):
+        idroute.append(route[i][0])
+    newroutecombobox['values'] = idroute
     newroutecombobox.current(0)
     newroutecombobox.grid(row=2, column=1, pady=5, padx=1)
-    newdeparttimeentry = Entry(trainwindow, bd=0, highlightthickness=2, highlightbackground = blue, font=medium_font)
+    newdeparttimeentry = Entry(newtrainwindow, bd=0, highlightthickness=2, highlightbackground = blue, font=medium_font)
     newdeparttimeentry.grid(row=3, column=1, pady=5, padx=10)
-
+    listrouteframe = LabelFrame(newtrainwindow, bg="white")
+    listrouteframe.grid(row=4, columnspan=2,pady=10)
+    for index, x in enumerate(route):
+        rowindex = index + 1
+        num = 0
+        for y in x:
+            route_label = Label(listrouteframe, text=y, bg='white', font=medium_font)
+            route_label.grid(row=rowindex, column=num)
+            num += 1
     # Create Buttons
-    addcustomerbutton = Button(trainwindow, text="Add Customer To Database", font=small_font, width=15, bg=green, bd=2, fg="white")
-    addcustomerbutton.grid(row=14, column=0, padx=10, pady=10, columnspan=2)
-def customer():
+    addcustomerbutton = Button(newtrainwindow, text="Submit", font=small_font, bg=green, bd=2, fg="white", command=submitupdatetrain)
+    addcustomerbutton.grid(row=5, column=0, padx=10, pady=10, columnspan=2)
+def edittrain(index):
+    edittrain = Tk()
+    edittrain.geometry('400x310')  # wxh
+    edittrain.resizable(False, False)
+    def trainupdate():
+        idtrain = editidentry.get()
+        request = {
+            "route_id": f"{editrouteentry.get()}",  # Reference Route, use get_all_route
+            "train_name": f"{editnameentry.get()}",
+            "departing_time": f"{editdeptimeentry.get()}",
+            "number_of_seats": 56
+        }
+        update_train(request, idtrain)
+        edittrain.destroy()
+    trainsearch = reduce_list(get_all_train(), poplist=[])
+    editidlabel = Label(edittrain, text="ID", font=medium_font)
+    editidlabel.grid(row=0, column=0, padx=5, pady=10)
+    editidentry = Entry(edittrain, font=medium_font)
+    editidentry.insert(0, trainsearch[index][0])
+    editidentry.grid(row=0, column=1, padx=5, pady=10)
+    editnamelabel = Label(edittrain, text="Name", font=medium_font)
+    editnamelabel.grid(row=1, column=0, padx=5, pady=10)
+    editnameentry = Entry(edittrain, font=medium_font)
+    editnameentry.insert(0, trainsearch[index][1])
+    editnameentry.grid(row=1, column=1, padx=5, pady=10)
+    editroutelabel = Label(edittrain, text="Route", font=medium_font)
+    editroutelabel.grid(row=2, column=0, padx=5, pady=10)
+    editrouteentry = Entry(edittrain, font=medium_font)
+    editrouteentry.insert(0, trainsearch[index][2])
+    editrouteentry.grid(row=2, column=1, padx=5, pady=10)
+    editdeptimelabel = Label(edittrain, text="Dep. Time", font=medium_font)
+    editdeptimelabel.grid(row=3, column=0, padx=5, pady=10)
+    editdeptimeentry = Entry(edittrain, font=medium_font)
+    editdeptimeentry.insert(0, trainsearch[index][3])
+    editdeptimeentry.grid(row=3, column=1, padx=5, pady=10)
+    editnoseatlabel = Label(edittrain, text="No. Seat", font=medium_font)
+    editnoseatlabel.grid(row=4, column=0, padx=5, pady=10)
+    editnoseatentry = Entry(edittrain, font=medium_font)
+    editnoseatentry.insert(0, trainsearch[index][4])
+    editnoseatentry.grid(row=4, column=1, padx=5, pady=10)
+    saveupdatebtn = Button(edittrain, text="Save", bg=green, fg='white', font=medium_font, command=trainupdate)
+    saveupdatebtn.grid(row=5, columnspan=2, pady=10)
+
+def listtrain():
+    editbtn = []
+    editbtn1 = Button(traintableframe, text="EDIT" , bg=blue, fg='white', font=small_font,
+                    command=lambda: edittrain(0))
+    editbtn2 = Button(traintableframe, text="EDIT" , bg=blue, fg='white', font=small_font,
+                    command=lambda: edittrain(1))
+    editbtn3 = Button(traintableframe, text="EDIT" , bg=blue, fg='white', font=small_font,
+                    command=lambda: edittrain(2))
+    editbtn4 = Button(traintableframe, text="EDIT" , bg=blue, fg='white', font=small_font,
+                    command=lambda: edittrain(3))
+    editbtn5 = Button(traintableframe, text="EDIT" , bg=blue, fg='white', font=small_font,
+                    command=lambda: edittrain(4))
+    editbtn6 = Button(traintableframe, text="EDIT" , bg=blue, fg='white', font=small_font,
+                    command=lambda: edittrain(5))
+    editbtn7 = Button(traintableframe, text="EDIT" , bg=blue, fg='white', font=small_font,
+                    command=lambda: edittrain(6))
+    editbtn8 = Button(traintableframe, text="EDIT" , bg=blue, fg='white', font=small_font,
+                    command=lambda: edittrain(7))
+    editbtn9 = Button(traintableframe, text="EDIT" , bg=blue, fg='white', font=small_font,
+                    command=lambda: edittrain(8))
+    editbtn10 = Button(traintableframe, text="EDIT" , bg=blue, fg='white', font=small_font,
+                    command=lambda: edittrain(9))
+    editbtn.append((editbtn1))
+    editbtn.append((editbtn2))
+    editbtn.append((editbtn3))
+    editbtn.append((editbtn4))
+    editbtn.append((editbtn5))
+    editbtn.append((editbtn6))
+    editbtn.append((editbtn7))
+    editbtn.append((editbtn8))
+    editbtn.append((editbtn9))
+    editbtn.append((editbtn10))
+    trainsearch = reduce_list(get_all_train(), poplist=[])
+    for index, x in enumerate(trainsearch):
+        rowindex = index + 1
+        num = 0
+        editbtn[index].grid(row=rowindex, column=5)
+        for y in x:
+            trainlookup_label = Label(traintableframe, text=y, bg='white', font=medium_font)
+            trainlookup_label.grid(row=rowindex, column=num)
+            num += 1
+def editcustomer(index):
+    editcustomer = Tk()
+    editcustomer.geometry('420x330')  # wxh
+    editcustomer.resizable(False, False)
+    def customerupdate():
+        idcustomer = editidentry.get()
+        allticket = get_all_ticket()
+        print(allticket[index])
+        request = {
+            "customer_name": f"{editnameentry.get()}",
+            "customer_id": f"{editpassportentry.get()}",
+            "customer_phone": f"{editcontactentry.get()}",
+            "ticket_type": "Return-trip",
+            "train_id" : allticket[index]['train_id'],
+            "departing_id": allticket[index]['departing_id'],
+            "destination_id":   allticket[index]['destination_id'],
+            "seat_number": editseatentry.get()  # [4,6]
+        }
+        update_ticket(request, idcustomer)
+        editcustomer.destroy()
+    #Refresh list
+    customersearch = reduce_list(get_all_ticket(), poplist=[4,5,7,10])
+    editidlabel = Label(editcustomer, text="ID", font=medium_font)
+    editidlabel.grid(row=0, column=0, padx=5, pady=10)
+    editidentry = Entry(editcustomer, font=medium_font)
+    editidentry.insert(0, customersearch[index][0])
+    editidentry.grid(row=0, column=1, padx=5, pady=10)
+    editnamelabel = Label(editcustomer, text="Name", font=medium_font)
+    editnamelabel.grid(row=1, column=0, padx=5, pady=10)
+    editnameentry = Entry(editcustomer, font=medium_font)
+    editnameentry.insert(0, customersearch[index][1])
+    editnameentry.grid(row=1, column=1, padx=5, pady=10)
+    editpassportlabel = Label(editcustomer, text="ID/Passport", font=medium_font)
+    editpassportlabel.grid(row=2, column=0, padx=5, pady=10)
+    editpassportentry = Entry(editcustomer, font=medium_font)
+    editpassportentry.insert(0, customersearch[index][2])
+    editpassportentry.grid(row=2, column=1, padx=5, pady=10)
+    editcontactlabel = Label(editcustomer, text="Contact", font=medium_font)
+    editcontactlabel.grid(row=3, column=0, padx=5, pady=10)
+    editcontactentry = Entry(editcustomer, font=medium_font)
+    editcontactentry.insert(0, customersearch[index][3])
+    editcontactentry.grid(row=3, column=1, padx=5, pady=10)
+    editpricelabel = Label(editcustomer, text="Price", font=medium_font)
+    editpricelabel.grid(row=4, column=0, padx=5, pady=10)
+    editpriceentry = Entry(editcustomer, font=medium_font)
+    editpriceentry.insert(0, customersearch[index][4])
+    editpriceentry.grid(row=4, column=1, padx=5, pady=10)
+    editseatlabel = Label(editcustomer, text="Seat", font=medium_font)
+    editseatlabel.grid(row=4, column=0, padx=5, pady=10)
+    editseatentry = Entry(editcustomer, font=medium_font)
+    editseatentry.insert(0, customersearch[index][5])
+    editseatentry.grid(row=4, column=1, padx=5, pady=10)
+    saveupdatebtn = Button(editcustomer, text="Save", bg=green, fg='white', font=medium_font, command=customerupdate)
+    saveupdatebtn.grid(row=5, columnspan=2, pady=10)
+def listcustomer():
+    editbtn = []
+    editbtn1 = Button(customertableframe, text="EDIT", bg=blue, fg='white', font=small_font,
+                      command=lambda: editcustomer(0))
+    editbtn2 = Button(customertableframe, text="EDIT", bg=blue, fg='white', font=small_font,
+                      command=lambda: editcustomer(1))
+    editbtn3 = Button(customertableframe, text="EDIT", bg=blue, fg='white', font=small_font,
+                      command=lambda: editcustomer(2))
+    editbtn4 = Button(customertableframe, text="EDIT", bg=blue, fg='white', font=small_font,
+                      command=lambda: editcustomer(3))
+    editbtn5 = Button(customertableframe, text="EDIT", bg=blue, fg='white', font=small_font,
+                      command=lambda: editcustomer(4))
+    editbtn6 = Button(customertableframe, text="EDIT", bg=blue, fg='white', font=small_font,
+                      command=lambda: editcustomer(5))
+    editbtn7 = Button(customertableframe, text="EDIT", bg=blue, fg='white', font=small_font,
+                      command=lambda: editcustomer(6))
+    editbtn8 = Button(customertableframe, text="EDIT", bg=blue, fg='white', font=small_font,
+                      command=lambda: editcustomer(7))
+    editbtn9 = Button(customertableframe, text="EDIT", bg=blue, fg='white', font=small_font,
+                      command=lambda: editcustomer(8))
+    editbtn10 = Button(customertableframe, text="EDIT", bg=blue, fg='white', font=small_font,
+                      command=lambda: editcustomer(9))
+    editbtn.append((editbtn1))
+    editbtn.append((editbtn2))
+    editbtn.append((editbtn3))
+    editbtn.append((editbtn4))
+    editbtn.append((editbtn5))
+    editbtn.append((editbtn6))
+    editbtn.append((editbtn7))
+    editbtn.append((editbtn8))
+    editbtn.append((editbtn9))
+    editbtn.append((editbtn10))
+    customersearch = reduce_list(get_all_ticket(), poplist=[4,5,7,10])
+    for index, x in enumerate(customersearch):
+        rowindex = index + 1
+        num = 0
+        editbtn[index].grid(row=rowindex, column=7)
+        for y in x:
+            customerlookup_label = Label(customertableframe, text=y, bg='white', font=medium_font)
+            customerlookup_label.grid(row=rowindex, column=num)
+            num += 1
+
+def customertab():
     trainbtn.config(bg=bluegrey)
     customerbtn.config(bg=weightedgrey)
     trainfindingframe.pack_forget()
@@ -266,239 +448,17 @@ def about():
     traininfobtn.config(bg=lightedblue)
     aboutbtn.config(bg=weightedblue)
     dashboarddetailframe.pack_forget()
-seatlist = []
-seated = [5, 12, 50]
+userseatlist = []
 def btnavailabel(seated):
     for i in seated:
-        seatlist[i-1].config(image=redimg)
-def changecolor1():
-    seatbtn1.config(image=redimg)
-    print(type(seatbtn1.cget("text")))
-    print(seatbtn1.cget("text"))
-def changecolor2():
-    seatbtn2.config(image=redimg)
-    print(type(seatbtn2.cget("text")))
-    print(seatbtn2.cget("text"))
-def changecolor3():
-    seatbtn3.config(image=redimg)
-    print(type(seatbtn3.cget("text")))
-    print(seatbtn3.cget("text"))
-def changecolor4():
-    seatbtn4.config(image=redimg)
-    print(type(seatbtn4.cget("text")))
-    print(seatbtn4.cget("text"))
-def changecolor5():
-    seatbtn5.config(image=redimg)
-    print(type(seatbtn5.cget("text")))
-    print(seatbtn5.cget("text"))
-def changecolor6():
-    seatbtn6.config(image=redimg)
-    print(type(seatbtn6.cget("text")))
-    print(seatbtn6.cget("text"))
-def changecolor7():
-    seatbtn7.config(image=redimg)
-    print(type(seatbtn7.cget("text")))
-    print(seatbtn7.cget("text"))
-def changecolor8():
-    seatbtn8.config(image=redimg)
-    print(type(seatbtn8.cget("text")))
-    print(seatbtn8.cget("text"))
-def changecolor9():
-    seatbtn9.config(image=redimg)
-    print(type(seatbtn9.cget("text")))
-    print(seatbtn9.cget("text"))
-def changecolor10():
-    seatbtn10.config(image=redimg)
-    print(type(seatbtn10.cget("text")))
-    print(seatbtn10.cget("text"))
-def changecolor11():
-    seatbtn11.config(image=redimg)
-    print(type(seatbtn11.cget("text")))
-    print(seatbtn11.cget("text"))
-def changecolor12():
-    seatbtn12.config(image=redimg)
-    print(type(seatbtn12.cget("text")))
-    print(seatbtn12.cget("text"))
-def changecolor13():
-    seatbtn13.config(image=redimg)
-    print(type(seatbtn13.cget("text")))
-    print(seatbtn13.cget("text"))
-def changecolor14():
-    seatbtn14.config(image=redimg)
-    print(type(seatbtn14.cget("text")))
-    print(seatbtn14.cget("text"))
-def changecolor15():
-    seatbtn15.config(image=redimg)
-    print(type(seatbtn15.cget("text")))
-    print(seatbtn15.cget("text"))
-def changecolor16():
-    seatbtn16.config(image=redimg)
-    print(type(seatbtn16.cget("text")))
-    print(seatbtn16.cget("text"))
-def changecolor17():
-    seatbtn17.config(image=redimg)
-    print(type(seatbtn17.cget("text")))
-    print(seatbtn17.cget("text"))
-def changecolor18():
-    seatbtn18.config(image=redimg)
-    print(type(seatbtn18.cget("text")))
-    print(seatbtn18.cget("text"))
-def changecolor19():
-    seatbtn19.config(image=redimg)
-    print(type(seatbtn19.cget("text")))
-    print(seatbtn19.cget("text"))
-def changecolor20():
-    seatbtn20.config(image=redimg)
-    print(type(seatbtn20.cget("text")))
-    print(seatbtn20.cget("text"))
-def changecolor21():
-    seatbtn21.config(image=redimg)
-    print(type(seatbtn21.cget("text")))
-    print(seatbtn21.cget("text"))
-def changecolor22():
-    seatbtn22.config(image=redimg)
-    print(type(seatbtn22.cget("text")))
-    print(seatbtn22.cget("text"))
-def changecolor23():
-    seatbtn23.config(image=redimg)
-    print(type(seatbtn23.cget("text")))
-    print(seatbtn23.cget("text"))
-def changecolor24():
-    seatbtn24.config(image=redimg)
-    print(type(seatbtn24.cget("text")))
-    print(seatbtn24.cget("text"))
-def changecolor25():
-    seatbtn25.config(image=redimg)
-    print(type(seatbtn25.cget("text")))
-    print(seatbtn25.cget("text"))
-def changecolor26():
-    seatbtn26.config(image=redimg)
-    print(type(seatbtn26.cget("text")))
-    print(seatbtn26.cget("text"))
-def changecolor27():
-    seatbtn27.config(image=redimg)
-    print(type(seatbtn27.cget("text")))
-    print(seatbtn27.cget("text"))
-def changecolor28():
-    seatbtn28.config(image=redimg)
-    print(type(seatbtn28.cget("text")))
-    print(seatbtn28.cget("text"))
-def changecolor29():
-    seatbtn29.config(image=redimg)
-    print(type(seatbtn29.cget("text")))
-    print(seatbtn29.cget("text"))
-def changecolor30():
-    seatbtn30.config(image=redimg)
-    print(type(seatbtn30.cget("text")))
-    print(seatbtn30.cget("text"))
-def changecolor31():
-    seatbtn31.config(image=redimg)
-    print(type(seatbtn31.cget("text")))
-    print(seatbtn31.cget("text"))
-def changecolor32():
-    seatbtn32.config(image=redimg)
-    print(type(seatbtn32.cget("text")))
-    print(seatbtn32.cget("text"))
-def changecolor33():
-    seatbtn33.config(image=redimg)
-    print(type(seatbtn33.cget("text")))
-    print(seatbtn33.cget("text"))
-def changecolor34():
-    seatbtn34.config(image=redimg)
-    print(type(seatbtn34.cget("text")))
-    print(seatbtn34.cget("text"))
-def changecolor35():
-    seatbtn35.config(image=redimg)
-    print(type(seatbtn35.cget("text")))
-    print(seatbtn35.cget("text"))
-def changecolor36():
-    seatbtn36.config(image=redimg)
-    print(type(seatbtn36.cget("text")))
-    print(seatbtn36.cget("text"))
-def changecolor37():
-    seatbtn37.config(image=redimg)
-    print(type(seatbtn37.cget("text")))
-    print(seatbtn37.cget("text"))
-def changecolor38():
-    seatbtn38.config(image=redimg)
-    print(type(seatbtn38.cget("text")))
-    print(seatbtn38.cget("text"))
-def changecolor39():
-    seatbtn39.config(image=redimg)
-    print(type(seatbtn39.cget("text")))
-    print(seatbtn39.cget("text"))
-def changecolor40():
-    seatbtn40.config(image=redimg)
-    print(type(seatbtn40.cget("text")))
-    print(seatbtn40.cget("text"))
-def changecolor41():
-    seatbtn41.config(image=redimg)
-    print(type(seatbtn41.cget("text")))
-    print(seatbtn41.cget("text"))
-def changecolor42():
-    seatbtn42.config(image=redimg)
-    print(type(seatbtn42.cget("text")))
-    print(seatbtn42.cget("text"))
-def changecolor43():
-    seatbtn43.config(image=redimg)
-    print(type(seatbtn43.cget("text")))
-    print(seatbtn43.cget("text"))
-def changecolor44():
-    seatbtn44.config(image=redimg)
-    print(type(seatbtn44.cget("text")))
-    print(seatbtn44.cget("text"))
-def changecolor45():
-    seatbtn45.config(image=redimg)
-    print(type(seatbtn45.cget("text")))
-    print(seatbtn45.cget("text"))
-def changecolor46():
-    seatbtn46.config(image=redimg)
-    print(type(seatbtn46.cget("text")))
-    print(seatbtn46.cget("text"))
-def changecolor47():
-    seatbtn47.config(image=redimg)
-    print(type(seatbtn47.cget("text")))
-    print(seatbtn47.cget("text"))
-def changecolor48():
-    seatbtn48.config(image=redimg)
-    print(type(seatbtn48.cget("text")))
-    print(seatbtn48.cget("text"))
-def changecolor49():
-    seatbtn49.config(image=redimg)
-    print(type(seatbtn49.cget("text")))
-    print(seatbtn49.cget("text"))
-def changecolor50():
-    seatbtn50.config(image=redimg)
-    print(type(seatbtn50.cget("text")))
-    print(seatbtn50.cget("text"))
-def changecolor51():
-    seatbtn51.config(image=redimg)
-    print(type(seatbtn51.cget("text")))
-    print(seatbtn51.cget("text"))
-def changecolor52():
-    seatbtn52.config(image=redimg)
-    print(type(seatbtn52.cget("text")))
-    print(seatbtn52.cget("text"))
-def changecolor53():
-    seatbtn53.config(image=redimg)
-    print(type(seatbtn53.cget("text")))
-    print(seatbtn53.cget("text"))
-def changecolor54():
-    seatbtn54.config(image=redimg)
-    print(type(seatbtn54.cget("text")))
-    print(seatbtn54.cget("text"))
-def changecolor55():
-    seatbtn55.config(image=redimg)
-    print(type(seatbtn55.cget("text")))
-    print(seatbtn55.cget("text"))
-def changecolor56():
-    seatbtn56.config(image=redimg)
-    print(type(seatbtn56.cget("text")))
-    print(seatbtn56.cget("text"))
+        userseatlist[i-1].config(image=redimg)
+def changecolor(seatno):
+    userseatlist[seatno].config(image=redimg)
+    print(userseatlist[seatno].cget("text"))
+    chosenseat.append(userseatlist[seatno].cget("text"))
 adminseatlist = []
-seated1=[1,2,3]
-def adminbtnavailabel(seated1):
-    for i in seated1:
+def adminbtnavailabel(seated):
+    for i in seated:
         adminseatlist[i-1].config(image=redimg)
 #Container
 containerframe = LabelFrame(root, bg=blue)
@@ -608,43 +568,42 @@ findblankframe3.pack(fill=X)
 #Starting Station
 marginframe2 = LabelFrame(findformframe, bd=0, bg=lightedgrey)
 marginframe2.pack()
-startlabel = Label(marginframe2, text='Starting Station', font=small_font, fg=blue, bg=lightedgrey)
-startlabel.grid(row=1, column=0, sticky=W, columnspan=2)
-startentry = Entry(marginframe2, highlightthickness=1, highlightbackground = blue, font=small_font)
-startentry.grid(row=2, column=0, ipadx=270, ipady=5, columnspan=2)
+startlabel = Label(marginframe2, text='Starting Station', font=medium_font, fg=blue, bg=lightedgrey)
+startlabel.grid(row=1, column=0, sticky=W, columnspan=3)
+startcombobox = ttk.Combobox(marginframe2, font=small_font, value=idstationlist)
+startcombobox.grid(row=2, column=0, ipadx=270, ipady=5, columnspan=3)
 #Blank Frame 4
 findblankframe4 = LabelFrame(marginframe2, bg=lightedgrey, bd=0)
-findblankframe4.grid(row=3, column=0, ipady=7, columnspan=2)
+findblankframe4.grid(row=3, column=0, ipady=7, columnspan=3)
 #Destination Station
-destilabel = Label(marginframe2, text='Destination', font=small_font, fg=blue, bg=lightedgrey)
-destilabel.grid(row=4, column=0, sticky=W, columnspan=2)
-destientry = Entry(marginframe2, highlightthickness=1, highlightbackground = blue, font=small_font)
-destientry.grid(row=5, column=0, ipadx=270, ipady=5, columnspan=2)
+destilabel = Label(marginframe2, text='Destination', font=medium_font, fg=blue, bg=lightedgrey)
+destilabel.grid(row=4, column=0, sticky=W, columnspan=3)
+desticombobox = ttk.Combobox(marginframe2, font=small_font, value=idstationlist)
+desticombobox.grid(row=5, column=0, ipadx=270, ipady=5, columnspan=3)
+stationframe = LabelFrame(marginframe2)
+stationframe.grid(row=6, column=0, ipady=7, columnspan=3, pady=10)
+for i in range(0, len(getstation)):
+    stations = str(getstation[i]["id"]) + "/ " + str(getstation[i]["station_name"])
+    stationlabel = Label(stationframe, text=stations, font= medium_font)
+    stationlabel.grid(row=i)
 #Blank Frame 5
 findblankframe5 = LabelFrame(marginframe2, bg=lightedgrey, bd=0)
-findblankframe5.grid(row=6, column=0, ipady=7, columnspan=2)
-#One-Doulbe Way selection
-r1 = IntVar()
-Radiobutton(marginframe2, text="One-way", font=small_font, fg=blue, variable=r1, value=1).grid(row=7, column=0)
-Radiobutton(marginframe2, text='Round-trip', font=small_font, fg=blue, variable=r1, value=2).grid(row=7, column=1)
-#Blank Frame 6
-findblankframe6 = LabelFrame(marginframe2, bg=lightedgrey, bd=0)
-findblankframe6.grid(row=8, column=0, ipady=7, columnspan=2)
-#Depart and Return Day
-departlabel = Label(marginframe2, text='Departure Day', font=small_font, fg=blue, bg=lightedgrey)
-departlabel.grid(row=9, column=0, sticky=W)
-departentry = Entry(marginframe2, highlightthickness=1, highlightbackground = blue, font=small_font)
-departentry.grid(row=10, column=0, ipadx=35, ipady=5, sticky=W)
-returndaylabel = Label(marginframe2, text='Returning Day', font=small_font, fg=blue, bg=lightedgrey)
-returndaylabel.grid(row=9, column=1, sticky=W)
-returndayentry = Entry(marginframe2, highlightthickness=1, highlightbackground = blue, font=small_font)
-returndayentry.grid(row=10, column=1, ipadx=35, ipady=5, sticky=W)
-#Blank Frame 7
-findblankframe7 = LabelFrame(marginframe2, bg=lightedgrey, bd=0)
-findblankframe7.grid(row=11, column=0, ipady=7, columnspan=2)
+findblankframe5.grid(row=7, column=0, ipady=7, columnspan=3)
+trainamelabel = Label(marginframe2, text="Train", font=medium_font, bg=lightedgrey, fg=blue)
+trainamelabel.grid(row=8, column=0, pady=5)
+usertrainname = StringVar()
+trainnamecombobox = ttk.Combobox(marginframe2, width=18, font=medium_font, textvariable=usertrainname)
+trainnamecombobox.bind("<<ComboboxSelected>>", userselecttrainname)
+trainnamecombobox.grid(row=8, column=1, pady=5)
+trainframe = LabelFrame(marginframe2)
+trainframe.grid(row=8, column=2, ipady=7, pady=10)
+for i in range(0, len(getalltrain)):
+    trains = str(getalltrain[i]["id"]) + "/ " + str(getalltrain[i]["train_name"])
+    trainlabel = Label(trainframe, text=trains, font= medium_font)
+    trainlabel.grid(row=i)
 #Find Button
 submitfindbtn = Button(marginframe2, text="FIND", font=medium_font, fg="white", bg=blue, command=findseat)
-submitfindbtn.grid(row=12, ipadx=40, columnspan=2)
+submitfindbtn.grid(row=9, ipadx=40, columnspan=3, pady=15)
 
 #START FIND SEAT PAGE !!!!!!!!!!!!!!!!!!!
 findseatbodyframe = LabelFrame(containerframe, bd=0, bg=grey)
@@ -657,7 +616,7 @@ seatbgframe.pack()
 #Seat Holder Container Frame
 seatcontainerframe = LabelFrame(seatbgframe, highlightthickness=2, highlightbackground = blue)
 seatcontainerframe.grid(row=0, column=0)
-#56 Seats (VERY LAZY THIS PART!!!!)
+#56 Seats
 #Left-Mid-Right Part Frame
 seatleftframe = LabelFrame(seatcontainerframe, bd=0, bg=lightedgrey)
 seatmidframe = LabelFrame(seatcontainerframe, bd=0, bg=lightedgrey)
@@ -670,128 +629,127 @@ greenimg = ImageTk.PhotoImage(Image.open('images/green.png').resize((54, 41), Im
 redimg = ImageTk.PhotoImage(Image.open('images/red.png').resize((54, 41), Image.ANTIALIAS))
 barriel = ImageTk.PhotoImage(Image.open('images/barriel.png').resize((40, 90), Image.ANTIALIAS))
 #Seat Left Display
-seatbtn1 = Button(seatleftframe, image=greenimg, borderwidth=0, text=1, fg='white', font=medium_font, compound=CENTER, command=changecolor1)
-seatlist.append(seatbtn1)
-seatbtn2 = Button(seatleftframe, image=greenimg, borderwidth=0, text=2, fg='white', font=medium_font, compound=CENTER, command=changecolor2)
-seatlist.append(seatbtn2)
-seatbtn3 = Button(seatleftframe, image=greenimg, borderwidth=0, text=3, fg='white', font=medium_font, compound=CENTER, command=changecolor3)
-seatlist.append(seatbtn3)
-seatbtn4 = Button(seatleftframe, image=greenimg, borderwidth=0, text=4, fg='white', font=medium_font, compound=CENTER, command=changecolor4)
-seatlist.append(seatbtn4)
-seatbtn5 = Button(seatleftframe, image=greenimg, borderwidth=0, text=5, fg='white', font=medium_font, compound=CENTER, command=changecolor5)
-seatlist.append(seatbtn5)
-seatbtn6 = Button(seatleftframe, image=greenimg, borderwidth=0, text=6, fg='white', font=medium_font, compound=CENTER, command=changecolor6)
-seatlist.append(seatbtn6)
-seatbtn7 = Button(seatleftframe, image=greenimg, borderwidth=0, text=7, fg='white', font=medium_font, compound=CENTER, command=changecolor7)
-seatlist.append(seatbtn7)
-seatbtn8 = Button(seatleftframe, image=greenimg, borderwidth=0, text=8, fg='white', font=medium_font, compound=CENTER, command=changecolor8)
-seatlist.append(seatbtn8)
-seatbtn9 = Button(seatleftframe, image=greenimg, borderwidth=0, text=9, fg='white', font=medium_font, compound=CENTER, command=changecolor9)
-seatlist.append(seatbtn9)
-seatbtn10 = Button(seatleftframe, image=greenimg, borderwidth=0, text=10, fg='white', font=medium_font, compound=CENTER, command=changecolor10)
-seatlist.append(seatbtn10)
-seatbtn11 = Button(seatleftframe, image=greenimg, borderwidth=0, text=11, fg='white', font=medium_font, compound=CENTER, command=changecolor11)
-seatlist.append(seatbtn11)
-seatbtn12 = Button(seatleftframe, image=greenimg, borderwidth=0, text=12, fg='white', font=medium_font, compound=CENTER, command=changecolor12)
-seatlist.append(seatbtn12)
-seatbtn13 = Button(seatleftframe, image=greenimg, borderwidth=0, text=13, fg='white', font=medium_font, compound=CENTER, command=changecolor13)
-seatlist.append(seatbtn13)
-seatbtn14 = Button(seatleftframe, image=greenimg, borderwidth=0, text=14, fg='white', font=medium_font, compound=CENTER, command=changecolor14)
-seatlist.append(seatbtn14)
-seatbtn15 = Button(seatleftframe, image=greenimg, borderwidth=0, text=15, fg='white', font=medium_font, compound=CENTER, command=changecolor15)
-seatlist.append(seatbtn15)
-seatbtn16 = Button(seatleftframe, image=greenimg, borderwidth=0, text=16, fg='white', font=medium_font, compound=CENTER, command=changecolor16)
-seatlist.append(seatbtn16)
-seatbtn17 = Button(seatleftframe, image=greenimg, borderwidth=0, text=17, fg='white', font=medium_font, compound=CENTER, command=changecolor17)
-seatlist.append(seatbtn17)
-seatbtn18 = Button(seatleftframe, image=greenimg, borderwidth=0, text=18, fg='white', font=medium_font, compound=CENTER, command=changecolor18)
-seatlist.append(seatbtn18)
-seatbtn19 = Button(seatleftframe, image=greenimg, borderwidth=0, text=19, fg='white', font=medium_font, compound=CENTER, command=changecolor19)
-seatlist.append(seatbtn19)
-seatbtn20 = Button(seatleftframe, image=greenimg, borderwidth=0, text=20, fg='white', font=medium_font, compound=CENTER, command=changecolor20)
-seatlist.append(seatbtn20)
-seatbtn21 = Button(seatleftframe, image=greenimg, borderwidth=0, text=21, fg='white', font=medium_font, compound=CENTER, command=changecolor21)
-seatlist.append(seatbtn21)
-seatbtn22 = Button(seatleftframe, image=greenimg, borderwidth=0, text=22, fg='white', font=medium_font, compound=CENTER, command=changecolor22)
-seatlist.append(seatbtn22)
-seatbtn23 = Button(seatleftframe, image=greenimg, borderwidth=0, text=23, fg='white', font=medium_font, compound=CENTER, command=changecolor23)
-seatlist.append(seatbtn23)
-seatbtn24 = Button(seatleftframe, image=greenimg, borderwidth=0, text=24, fg='white', font=medium_font, compound=CENTER, command=changecolor24)
-seatlist.append(seatbtn24)
-seatbtn25 = Button(seatleftframe, image=greenimg, borderwidth=0, text=25, fg='white', font=medium_font, compound=CENTER, command=changecolor25)
-seatlist.append(seatbtn25)
-seatbtn26 = Button(seatleftframe, image=greenimg, borderwidth=0, text=26, fg='white', font=medium_font, compound=CENTER, command=changecolor26)
-seatlist.append(seatbtn26)
-seatbtn27 = Button(seatleftframe, image=greenimg, borderwidth=0, text=27, fg='white', font=medium_font, compound=CENTER, command=changecolor27)
+seatbtn1 = Button(seatleftframe, image=greenimg, borderwidth=0, text=1, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(0))
+userseatlist.append(seatbtn1)
+seatbtn2 = Button(seatleftframe, image=greenimg, borderwidth=0, text=2, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(1))
+userseatlist.append(seatbtn2)
+seatbtn3 = Button(seatleftframe, image=greenimg, borderwidth=0, text=3, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(2))
+userseatlist.append(seatbtn3)
+seatbtn4 = Button(seatleftframe, image=greenimg, borderwidth=0, text=4, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(3))
+userseatlist.append(seatbtn4)
+seatbtn5 = Button(seatleftframe, image=greenimg, borderwidth=0, text=5, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(4))
+userseatlist.append(seatbtn5)
+seatbtn6 = Button(seatleftframe, image=greenimg, borderwidth=0, text=6, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(5))
+userseatlist.append(seatbtn6)
+seatbtn7 = Button(seatleftframe, image=greenimg, borderwidth=0, text=7, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(6))
+userseatlist.append(seatbtn7)
+seatbtn8 = Button(seatleftframe, image=greenimg, borderwidth=0, text=8, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(7))
+userseatlist.append(seatbtn8)
+seatbtn9 = Button(seatleftframe, image=greenimg, borderwidth=0, text=9, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(8))
+userseatlist.append(seatbtn9)
+seatbtn10 = Button(seatleftframe, image=greenimg, borderwidth=0, text=10, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(9))
+userseatlist.append(seatbtn10)
+seatbtn11 = Button(seatleftframe, image=greenimg, borderwidth=0, text=11, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(10))
+userseatlist.append(seatbtn11)
+seatbtn12 = Button(seatleftframe, image=greenimg, borderwidth=0, text=12, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(11))
+userseatlist.append(seatbtn12)
+seatbtn13 = Button(seatleftframe, image=greenimg, borderwidth=0, text=13, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(12))
+userseatlist.append(seatbtn13)
+seatbtn14 = Button(seatleftframe, image=greenimg, borderwidth=0, text=14, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(13))
+userseatlist.append(seatbtn14)
+seatbtn15 = Button(seatleftframe, image=greenimg, borderwidth=0, text=15, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(14))
+userseatlist.append(seatbtn15)
+seatbtn16 = Button(seatleftframe, image=greenimg, borderwidth=0, text=16, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(15))
+userseatlist.append(seatbtn16)
+seatbtn17 = Button(seatleftframe, image=greenimg, borderwidth=0, text=17, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(16))
+userseatlist.append(seatbtn17)
+seatbtn18 = Button(seatleftframe, image=greenimg, borderwidth=0, text=18, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(17))
+userseatlist.append(seatbtn18)
+seatbtn19 = Button(seatleftframe, image=greenimg, borderwidth=0, text=19, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(18))
+userseatlist.append(seatbtn19)
+seatbtn20 = Button(seatleftframe, image=greenimg, borderwidth=0, text=20, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(19))
+userseatlist.append(seatbtn20)
+seatbtn21 = Button(seatleftframe, image=greenimg, borderwidth=0, text=21, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(20))
+userseatlist.append(seatbtn21)
+seatbtn22 = Button(seatleftframe, image=greenimg, borderwidth=0, text=22, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(21))
+userseatlist.append(seatbtn22)
+seatbtn23 = Button(seatleftframe, image=greenimg, borderwidth=0, text=23, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(22))
+userseatlist.append(seatbtn23)
+seatbtn24 = Button(seatleftframe, image=greenimg, borderwidth=0, text=24, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(23))
+userseatlist.append(seatbtn24)
+seatbtn25 = Button(seatleftframe, image=greenimg, borderwidth=0, text=25, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(24))
+userseatlist.append(seatbtn25)
+seatbtn26 = Button(seatleftframe, image=greenimg, borderwidth=0, text=26, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(25))
+userseatlist.append(seatbtn26)
+seatbtn27 = Button(seatleftframe, image=greenimg, borderwidth=0, text=27, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(26))
 seatbtn27.grid(row=2, column=6)
-seatlist.append(seatbtn27)
-seatbtn28 = Button(seatleftframe, image=greenimg, borderwidth=0, text=28, fg='white', font=medium_font, compound=CENTER, command=changecolor28)
+userseatlist.append(seatbtn27)
+seatbtn28 = Button(seatleftframe, image=greenimg, borderwidth=0, text=28, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(27))
 seatbtn28.grid(row=3, column=6)
-seatlist.append(seatbtn28)
+userseatlist.append(seatbtn28)
 #Seat Mid Display
 barriel1label = Label(seatmidframe, image=barriel, bg=lightedgrey, bd=0)
 barriel2label = Label(seatmidframe, image=barriel, bg=lightedgrey, bd=0)
 barriel1label.pack()
 barriel2label.pack()
 #Seat Right Display
-seatbtn29 = Button(seatrightframe, image=greenimg, borderwidth=0, text=29, fg='white', font=medium_font, compound=CENTER, command=changecolor29)
-seatlist.append(seatbtn29)
-seatbtn30 = Button(seatrightframe, image=greenimg, borderwidth=0, text=30, fg='white', font=medium_font, compound=CENTER, command=changecolor30)
-seatlist.append(seatbtn30)
-seatbtn31 = Button(seatrightframe, image=greenimg, borderwidth=0, text=31, fg='white', font=medium_font, compound=CENTER, command=changecolor31)
-seatlist.append(seatbtn31)
-seatbtn32 = Button(seatrightframe, image=greenimg, borderwidth=0, text=32, fg='white', font=medium_font, compound=CENTER, command=changecolor32)
-seatlist.append(seatbtn32)
-seatbtn33 = Button(seatrightframe, image=greenimg, borderwidth=0, text=33, fg='white', font=medium_font, compound=CENTER, command=changecolor33)
-seatlist.append(seatbtn33)
-seatbtn34 = Button(seatrightframe, image=greenimg, borderwidth=0, text=34, fg='white', font=medium_font, compound=CENTER, command=changecolor34)
-seatlist.append(seatbtn34)
-seatbtn35 = Button(seatrightframe, image=greenimg, borderwidth=0, text=35, fg='white', font=medium_font, compound=CENTER, command=changecolor35)
-seatlist.append(seatbtn35)
-seatbtn36 = Button(seatrightframe, image=greenimg, borderwidth=0, text=36, fg='white', font=medium_font, compound=CENTER, command=changecolor36)
-seatlist.append(seatbtn36)
-seatbtn37 = Button(seatrightframe, image=greenimg, borderwidth=0, text=37, fg='white', font=medium_font, compound=CENTER, command=changecolor37)
-seatlist.append(seatbtn37)
-seatbtn38 = Button(seatrightframe, image=greenimg, borderwidth=0, text=38, fg='white', font=medium_font, compound=CENTER, command=changecolor38)
-seatlist.append(seatbtn38)
-seatbtn39 = Button(seatrightframe, image=greenimg, borderwidth=0, text=39, fg='white', font=medium_font, compound=CENTER, command=changecolor39)
-seatlist.append(seatbtn39)
-seatbtn40 = Button(seatrightframe, image=greenimg, borderwidth=0, text=40, fg='white', font=medium_font, compound=CENTER, command=changecolor40)
-seatlist.append(seatbtn40)
-seatbtn41 = Button(seatrightframe, image=greenimg, borderwidth=0, text=41, fg='white', font=medium_font, compound=CENTER, command=changecolor41)
-seatlist.append(seatbtn41)
-seatbtn42 = Button(seatrightframe, image=greenimg, borderwidth=0, text=42, fg='white', font=medium_font, compound=CENTER, command=changecolor42)
-seatlist.append(seatbtn42)
-seatbtn43 = Button(seatrightframe, image=greenimg, borderwidth=0, text=43, fg='white', font=medium_font, compound=CENTER, command=changecolor43)
-seatlist.append(seatbtn43)
-seatbtn44 = Button(seatrightframe, image=greenimg, borderwidth=0, text=44, fg='white', font=medium_font, compound=CENTER, command=changecolor44)
-seatlist.append(seatbtn44)
-seatbtn45 = Button(seatrightframe, image=greenimg, borderwidth=0, text=45, fg='white', font=medium_font, compound=CENTER, command=changecolor45)
-seatlist.append(seatbtn45)
-seatbtn46 = Button(seatrightframe, image=greenimg, borderwidth=0, text=46, fg='white', font=medium_font, compound=CENTER, command=changecolor46)
-seatlist.append(seatbtn46)
-seatbtn47 = Button(seatrightframe, image=greenimg, borderwidth=0, text=47, fg='white', font=medium_font, compound=CENTER, command=changecolor47)
-seatlist.append(seatbtn47)
-seatbtn48 = Button(seatrightframe, image=greenimg, borderwidth=0, text=48, fg='white', font=medium_font, compound=CENTER, command=changecolor48)
-seatlist.append(seatbtn48)
-seatbtn49 = Button(seatrightframe, image=greenimg, borderwidth=0, text=49, fg='white', font=medium_font, compound=CENTER, command=changecolor49)
-seatlist.append(seatbtn49)
-seatbtn50 = Button(seatrightframe, image=greenimg, borderwidth=0, text=50, fg='white', font=medium_font, compound=CENTER, command=changecolor50)
-seatlist.append(seatbtn50)
-seatbtn51 = Button(seatrightframe, image=greenimg, borderwidth=0, text=51, fg='white', font=medium_font, compound=CENTER, command=changecolor51)
-seatlist.append(seatbtn51)
-seatbtn52 = Button(seatrightframe, image=greenimg, borderwidth=0, text=52, fg='white', font=medium_font, compound=CENTER, command=changecolor52)
-seatlist.append(seatbtn52)
-seatbtn53 = Button(seatrightframe, image=greenimg, borderwidth=0, text=53, fg='white', font=medium_font, compound=CENTER, command=changecolor53)
-seatlist.append(seatbtn53)
-seatbtn54 = Button(seatrightframe, image=greenimg, borderwidth=0, text=54, fg='white', font=medium_font, compound=CENTER, command=changecolor54)
-seatlist.append(seatbtn54)
-seatbtn55 = Button(seatrightframe, image=greenimg, borderwidth=0, text=55, fg='white', font=medium_font, compound=CENTER, command=changecolor55)
-seatlist.append(seatbtn55)
-seatbtn56 = Button(seatrightframe, image=greenimg, borderwidth=0, text=56, fg='white', font=medium_font, compound=CENTER, command=changecolor56)
-seatlist.append(seatbtn56)
+seatbtn29 = Button(seatrightframe, image=greenimg, borderwidth=0, text=29, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(28))
+userseatlist.append(seatbtn29)
+seatbtn30 = Button(seatrightframe, image=greenimg, borderwidth=0, text=30, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(29))
+userseatlist.append(seatbtn30)
+seatbtn31 = Button(seatrightframe, image=greenimg, borderwidth=0, text=31, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(30))
+userseatlist.append(seatbtn31)
+seatbtn32 = Button(seatrightframe, image=greenimg, borderwidth=0, text=32, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(31))
+userseatlist.append(seatbtn32)
+seatbtn33 = Button(seatrightframe, image=greenimg, borderwidth=0, text=33, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(32))
+userseatlist.append(seatbtn33)
+seatbtn34 = Button(seatrightframe, image=greenimg, borderwidth=0, text=34, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(33))
+userseatlist.append(seatbtn34)
+seatbtn35 = Button(seatrightframe, image=greenimg, borderwidth=0, text=35, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(34))
+userseatlist.append(seatbtn35)
+seatbtn36 = Button(seatrightframe, image=greenimg, borderwidth=0, text=36, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(35))
+userseatlist.append(seatbtn36)
+seatbtn37 = Button(seatrightframe, image=greenimg, borderwidth=0, text=37, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(36))
+userseatlist.append(seatbtn37)
+seatbtn38 = Button(seatrightframe, image=greenimg, borderwidth=0, text=38, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(37))
+userseatlist.append(seatbtn38)
+seatbtn39 = Button(seatrightframe, image=greenimg, borderwidth=0, text=39, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(38))
+userseatlist.append(seatbtn39)
+seatbtn40 = Button(seatrightframe, image=greenimg, borderwidth=0, text=40, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(39))
+userseatlist.append(seatbtn40)
+seatbtn41 = Button(seatrightframe, image=greenimg, borderwidth=0, text=41, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(40))
+userseatlist.append(seatbtn41)
+seatbtn42 = Button(seatrightframe, image=greenimg, borderwidth=0, text=42, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(41))
+userseatlist.append(seatbtn42)
+seatbtn43 = Button(seatrightframe, image=greenimg, borderwidth=0, text=43, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(42))
+userseatlist.append(seatbtn43)
+seatbtn44 = Button(seatrightframe, image=greenimg, borderwidth=0, text=44, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(43))
+userseatlist.append(seatbtn44)
+seatbtn45 = Button(seatrightframe, image=greenimg, borderwidth=0, text=45, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(44))
+userseatlist.append(seatbtn45)
+seatbtn46 = Button(seatrightframe, image=greenimg, borderwidth=0, text=46, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(45))
+userseatlist.append(seatbtn46)
+seatbtn47 = Button(seatrightframe, image=greenimg, borderwidth=0, text=47, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(46))
+userseatlist.append(seatbtn47)
+seatbtn48 = Button(seatrightframe, image=greenimg, borderwidth=0, text=48, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(47))
+userseatlist.append(seatbtn48)
+seatbtn49 = Button(seatrightframe, image=greenimg, borderwidth=0, text=49, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(48))
+userseatlist.append(seatbtn49)
+seatbtn50 = Button(seatrightframe, image=greenimg, borderwidth=0, text=50, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(49))
+userseatlist.append(seatbtn50)
+seatbtn51 = Button(seatrightframe, image=greenimg, borderwidth=0, text=51, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(50))
+userseatlist.append(seatbtn51)
+seatbtn52 = Button(seatrightframe, image=greenimg, borderwidth=0, text=52, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(51))
+userseatlist.append(seatbtn52)
+seatbtn53 = Button(seatrightframe, image=greenimg, borderwidth=0, text=53, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(52))
+userseatlist.append(seatbtn53)
+seatbtn54 = Button(seatrightframe, image=greenimg, borderwidth=0, text=54, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(53))
+userseatlist.append(seatbtn54)
+seatbtn55 = Button(seatrightframe, image=greenimg, borderwidth=0, text=55, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(54))
+userseatlist.append(seatbtn55)
+seatbtn56 = Button(seatrightframe, image=greenimg, borderwidth=0, text=56, fg='white', font=medium_font, compound=CENTER, command=lambda: changecolor(55))
+userseatlist.append(seatbtn56)
 #Function Seated Button
-btnavailabel(seated)
 seatbtn1.grid(row=0, column=0)
 seatbtn2.grid(row=1, column=0)
 seatbtn3.grid(row=2, column=0)
@@ -932,7 +890,7 @@ subhead3label.grid(row=1, column=0, sticky='W', pady=5)
 sucesspurchasedimg = ImageTk.PhotoImage(Image.open('images/successpurchased.png').resize((700, 70), Image.ANTIALIAS))
 sucesspurchasedlabel = Label(thirdpageframe, image=sucesspurchasedimg, bg='white')
 sucesspurchasedlabel.grid(row=2, column=0, pady=10)
-endingpurchasesbtn = Button(thirdpageframe, font=medium_font, text="Back To Home Screen", fg="white", bg=blue, command=homepage)
+endingpurchasesbtn = Button(thirdpageframe, font=medium_font, text="Back To Home Screen", fg="white", bg=blue, command=usersubmit)
 endingpurchasesbtn.grid(row=3, column=0, pady=10)
 
 #Start Admin Page!!!!!!!!!!!!!!!!
@@ -978,102 +936,47 @@ aboutbtn.pack(fill=X, pady=10)
 
 #Dashboard
 dashboarddetailframe = LabelFrame(adminholderframe, bd=0, bg='white', width=850, height=500)
-currenttrainframe = LabelFrame(dashboarddetailframe, bd=0, bg='white')
-currenttrainframe.grid(row=0, column=0)
+# Create A Canvas
+my_canvas = Canvas(dashboarddetailframe, bg='white')
+my_canvas.pack(side=LEFT, fill=BOTH, expand=1)
+# Add A Scrollbar To The Canvas
+my_scrollbar = ttk.Scrollbar(dashboarddetailframe, orient=VERTICAL, command=my_canvas.yview)
+my_scrollbar.pack(side=RIGHT, fill=Y)
+# Configure The Canvas
+my_canvas.configure(yscrollcommand=my_scrollbar.set)
+my_canvas.bind('<Configure>', lambda e: my_canvas.configure(scrollregion = my_canvas.bbox("all")))
+currenttrainframe = LabelFrame(my_canvas, bd=0, bg='white')
+# Add that New frame To a Window In The Canvas
+my_canvas.create_window((300,0), window=currenttrainframe, anchor="nw")
 currenttrainlabel = Label(currenttrainframe, text='Current train running', font=med_large_font, bg='white', fg=blue)
-currenttrainlabel.grid(row=0, column=0, padx=15, columnspan=3)
-#First Trip
-traintripframe1= LabelFrame(currenttrainframe, bg='white', bd=0)
-traintripframe1.grid(row=1, column=0, padx=15, pady=10)
-traintripimg = ImageTk.PhotoImage(Image.open('images/traintrip.png').resize((240, 171), Image.ANTIALIAS))
-traintripbtn1 = Button(traintripframe1, image=traintripimg, bg='white', bd=0, command=adminfindseat)
-traintripbtn1.pack()
-traincodelabel1 = Label(traintripframe1, text='SE1', font=small_font, bg='white')
-traincodelabel1.place(x=20, y=5)
-traintimelabel1 = Label(traintripframe1, text='17h00-20h00', font=small_font, bg='white')
-traintimelabel1.place(x=100, y=5)
-departlabel1 = Label(traintripframe1, text='Hanoi', font=small_font, bg='white')
-departlabel1.place(x=100, y=40)
-destilabel1 = Label(traintripframe1, text='Thanh Hoa', font=small_font, bg='white')
-destilabel1.place(x=100, y=67)
-availabel1 = Label(traintripframe1, text='56/56', font=small_font, bg='white')
-availabel1.place(x=100, y=100)
-#Second Trip
-traintripframe2= LabelFrame(currenttrainframe, bg='white', bd=0)
-traintripframe2.grid(row=1, column=1, padx=15, pady=10)
-traintripbtn2 = Button(traintripframe2, image=traintripimg, bg='white', bd=0, command=adminfindseat)
-traintripbtn2.pack()
-traincodelabel2 = Label(traintripframe2, text='SE1', font=small_font, bg='white')
-traincodelabel2.place(x=20, y=5)
-traintimelabel2 = Label(traintripframe2, text='17h00-20h00', font=small_font, bg='white')
-traintimelabel2.place(x=100, y=5)
-departlabel2 = Label(traintripframe2, text='Hanoi', font=small_font, bg='white')
-departlabel2.place(x=100, y=40)
-destilabel2 = Label(traintripframe2, text='Thanh Hoa', font=small_font, bg='white')
-destilabel2.place(x=100, y=67)
-availabel2 = Label(traintripframe2, text='56/56', font=small_font, bg='white')
-availabel2.place(x=100, y=100)
-#Third Trip
-traintripframe3= LabelFrame(currenttrainframe, bg='white', bd=0)
-traintripframe3.grid(row=1, column=2, padx=15, pady=10)
-traintripbtn3 = Button(traintripframe3, image=traintripimg, bg='white', bd=0, command=adminfindseat)
-traintripbtn3.pack()
-traincodelabel3 = Label(traintripframe3, text='SE1', font=small_font, bg='white')
-traincodelabel3.place(x=20, y=5)
-traintimelabel3 = Label(traintripframe3, text='17h00-20h00', font=small_font, bg='white')
-traintimelabel3.place(x=100, y=5)
-departlabel3 = Label(traintripframe3, text='Hanoi', font=small_font, bg='white')
-departlabel3.place(x=100, y=40)
-destilabel3 = Label(traintripframe3, text='Thanh Hoa', font=small_font, bg='white')
-destilabel3.place(x=100, y=67)
-availabel3 = Label(traintripframe3, text='56/56', font=small_font, bg='white')
-availabel3.place(x=100, y=100)
-#Forth Trip
-traintripframe4= LabelFrame(currenttrainframe, bg='white', bd=0)
-traintripframe4.grid(row=2, column=0, padx=15, pady=10)
-traintripbtn4 = Button(traintripframe4, image=traintripimg, bg='white', bd=0, command=adminfindseat)
-traintripbtn4.pack()
-traincodelabel4 = Label(traintripframe4, text='SE1', font=small_font, bg='white')
-traincodelabel4.place(x=20, y=5)
-traintimelabel4 = Label(traintripframe4, text='17h00-20h00', font=small_font, bg='white')
-traintimelabel4.place(x=100, y=5)
-departlabel4 = Label(traintripframe4, text='Hanoi', font=small_font, bg='white')
-departlabel4.place(x=100, y=40)
-destilabel4 = Label(traintripframe4, text='Thanh Hoa', font=small_font, bg='white')
-destilabel4.place(x=100, y=67)
-availabel4 = Label(traintripframe4, text='56/56', font=small_font, bg='white')
-availabel4.place(x=100, y=100)
-#Fifth Trip
-traintripframe5= LabelFrame(currenttrainframe, bg='white', bd=0)
-traintripframe5.grid(row=2, column=1, padx=15, pady=10)
-traintripbtn5 = Button(traintripframe5, image=traintripimg, bg='white', bd=0, command=adminfindseat)
-traintripbtn5.pack()
-traincodelabel5 = Label(traintripframe5, text='SE1', font=small_font, bg='white')
-traincodelabel5.place(x=20, y=5)
-traintimelabel5 = Label(traintripframe5, text='17h00-20h00', font=small_font, bg='white')
-traintimelabel5.place(x=100, y=5)
-departlabel5 = Label(traintripframe5, text='Hanoi', font=small_font, bg='white')
-departlabel5.place(x=100, y=40)
-destilabel5 = Label(traintripframe5, text='Thanh Hoa', font=small_font, bg='white')
-destilabel5.place(x=100, y=67)
-availabel5 = Label(traintripframe5, text='56/56', font=small_font, bg='white')
-availabel5.place(x=100, y=100)
-#Sixth Trip
-traintripframe6= LabelFrame(currenttrainframe, bg='white', bd=0)
-traintripframe6.grid(row=2, column=2, padx=15, pady=10)
-traintripbtn6 = Button(traintripframe6, image=traintripimg, bg='white', bd=0, command=adminfindseat)
-traintripbtn6.pack()
-traincodelabel6 = Label(traintripframe6, text='SE1', font=small_font, bg='white')
-traincodelabel6.place(x=20, y=5)
-traintimelabel6 = Label(traintripframe6, text='17h00-20h00', font=small_font, bg='white')
-traintimelabel6.place(x=100, y=5)
-departlabel6 = Label(traintripframe6, text='Hanoi', font=small_font, bg='white')
-departlabel6.place(x=100, y=40)
-destilabel6 = Label(traintripframe6, text='Thanh Hoa', font=small_font, bg='white')
-destilabel6.place(x=100, y=67)
-availabel6 = Label(traintripframe6, text='56/56', font=small_font, bg='white')
-availabel6.place(x=100, y=100)
-
+currenttrainlabel.pack()
+#Train Current
+class Train():
+  def __init__(self, index):
+    self.frame = LabelFrame(currenttrainframe, bg='white', bd=0)
+    self.traintripbtn = Button(self.frame, image=traintripimg, bg='white', bd=0, command=lambda :adminfindseat(resultlisttrain[index][4]))
+    self.traintripbtn.pack()
+    self.trainnamelabel = Label(self.frame, text='', font=small_font, bg='white')
+    self.trainnamelabel.place(x=20, y=5)
+    self.traintimelabel = Label(self.frame, text='', font=small_font, bg='white')
+    self.traintimelabel.place(x=100, y=5)
+    self.departlabel = Label(self.frame, text='', font=small_font, bg='white')
+    self.departlabel.place(x=100, y=40)
+    self.availabel = Label(self.frame, text='', font=small_font, bg='white')
+    self.availabel.place(x=100, y=100)
+listtraincurrent = []
+train1 = Train(0)
+train2 = Train(1)
+train3 = Train(2)
+train4 = Train(3)
+train5 = Train(4)
+train6 = Train(5)
+listtraincurrent.append(train1)
+listtraincurrent.append(train2)
+listtraincurrent.append(train3)
+listtraincurrent.append(train4)
+listtraincurrent.append(train5)
+listtraincurrent.append(train6)
 #Seat Holder Container Frame
 adminseatcontainerframe = LabelFrame(dashboarddetailframe, highlightthickness=2, highlightbackground = blue)
 #56 Seats (VERY LAZY THIS PART!!!!)
@@ -1206,7 +1109,6 @@ adminseatlist.append(adminseatbtn55)
 adminseatbtn56 = Button(adminseatrightframe, image=greenimg, borderwidth=0, text=56, fg='white', font=medium_font, compound=CENTER)
 adminseatlist.append(adminseatbtn56)
 #Function Seated Button
-adminbtnavailabel(seated1)
 adminseatbtn1.grid(row=0, column=0)
 adminseatbtn2.grid(row=1, column=0)
 adminseatbtn3.grid(row=2, column=0)
@@ -1268,9 +1170,9 @@ leftsidebarinfoframe.pack(fill=BOTH, expand=YES, side=LEFT)
 rightinfoframe = LabelFrame(traininfodetailframe, bg='red', width=700, height=500, bd=0)
 rightinfoframe.pack(fill=BOTH, expand=YES, side=RIGHT)
 #Sidebar Info
-trainbtn = Button(leftsidebarinfoframe, text="Train", fg="black", bg=bluegrey, bd=0, font=med_large_font, command=train)
+trainbtn = Button(leftsidebarinfoframe, text="Train", fg="black", bg=bluegrey, bd=0, font=med_large_font, command=traintab)
 trainbtn.pack(fill=X, pady=10)
-customerbtn = Button(leftsidebarinfoframe, text="Customer", fg='black', bg=bluegrey, bd=0, font=med_large_font, command=customer)
+customerbtn = Button(leftsidebarinfoframe, text="Customer", fg='black', bg=bluegrey, bd=0, font=med_large_font, command=customertab)
 customerbtn.pack(fill=X, pady=10)
 #Train Finding
 trainfindingframe = LabelFrame(rightinfoframe, bd=0, bg='white', width=700, height=500)
@@ -1314,7 +1216,7 @@ customertableframe = LabelFrame(customerfindingframe, bd=2, bg='white', highligh
 customertableframe.grid(row=3, columnspan=4)
 customertableimg = ImageTk.PhotoImage(Image.open('images/customertable.png').resize((650,45), Image.ANTIALIAS))
 customercolumntablelabel = Label(customertableframe, image=customertableimg, bg='white', bd=0)
-customercolumntablelabel.grid(row=0, column=0, columnspan=6)
+customercolumntablelabel.grid(row=0, column=0, columnspan=8)
 
 #Display Fixed Frame
 containerframe.pack(fill=BOTH, expand=YES)

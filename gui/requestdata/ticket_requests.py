@@ -1,6 +1,6 @@
 import requests
 import json
-from train_requests import get_train
+from .train_requests import get_train
 
 ticket_fields = ['id', 'customer_name', 'customer_id', 'customer_phone', 'departing_station', 'destination', 'train_id', 'ticket_type', 'seat_number', 'price', 'bought_at']
 ticket_url = "http://127.0.0.1:8000/ticket/"
@@ -99,4 +99,4 @@ def get_ticket_info(id):
     }
     return ticket_info
 
-print(create_ticket(ticket_form))
+print(get_all_ticket())
