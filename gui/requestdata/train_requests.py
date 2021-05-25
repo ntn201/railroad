@@ -2,8 +2,8 @@ import requests
 import json
 from datetime import datetime
 
-from .route_requests import get_route
-from .seat_requests import get_seats_of_train
+from route_requests import get_route
+from seat_requests import get_seats_of_train
 
 train_fields = ['id', 'train_name', 'route_id', 'departing_time', 'number_of_seats']
 train_url = "http://127.0.0.1:8000/train/"
@@ -39,8 +39,8 @@ def get_train(id):
 
 train_form = {   
     "route_id": "1",                                   #Reference Route, use get_all_route
-    "train_name": "HN-SG",
-    "departing_time": "2021-5-21 17:00:00",
+    "train_name": "HN-SG1",
+    "departing_time": "2021-5-27 20:00:00",
     "number_of_seats": 56
 }
 

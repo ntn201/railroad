@@ -9,6 +9,7 @@ from train.models import Train
 from station.models import Station
 from seat.models import Seat
 from seat.serializers import SeatSerializer
+from schedule.models import Schedule
 import json
 
 # Create your views here.
@@ -56,10 +57,8 @@ class TicketCreator(APIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        # train = Train.objects.get(train_name=body['train_name']).id
-        # dep = Station.objects.get(station_name=body['departing_station'])
-        # des = Station.objects.get(station_name=body['destination'])
-        price = abs(Station.objects.get(id=body['destination_id']).station_distance - Station.objects.get(id=body['departing_id']).station_distance)
+        
+        price = abs(Schedule.objects.filter(route_id=Train.objects.get(id = body['train_id']).route_id).get(station_id=body['destination_id']).travel_time - Schedule.objects.filter(route_id=Train.objects.get(id = body['train_id']).route_id).get(station_id=body['departing_id']).travel_time)
         if body["ticket_type"] == "Return-trip":
             price = price * 2
         seats = body['seat_number']

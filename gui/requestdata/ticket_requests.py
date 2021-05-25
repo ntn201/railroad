@@ -1,6 +1,6 @@
 import requests
 import json
-from .train_requests import get_train
+from train_requests import get_train
 
 ticket_fields = ['id', 'customer_name', 'customer_id', 'customer_phone', 'departing_station', 'destination', 'train_id', 'ticket_type', 'seat_number', 'price', 'bought_at']
 ticket_url = "http://127.0.0.1:8000/ticket/"
@@ -52,9 +52,9 @@ ticket_form = {
     "customer_phone": "12346",
     "ticket_type": "Return-trip",                   # Return-trip or One-way 
     "train_id": 1,                                  # Train id
-    "departing_id": 2,                              # Station id
-    "destination_id": 5,                            # Station id
-    "seat_number": [3]                              # Is an array of integer
+    "departing_id": 1,                              # Station id
+    "destination_id": 2,                            # Station id
+    "seat_number": [1]                              # Is an array of integer
 }
 
 def create_ticket(request):
@@ -99,4 +99,3 @@ def get_ticket_info(id):
     }
     return ticket_info
 
-print(get_all_ticket())
