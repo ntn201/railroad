@@ -1,6 +1,5 @@
-Final Project - Advanced Programming in Python.
-USTH - ICT - YEAR 2 - 2020-2021.
-
+Final Project - Advanced Programming in Python
+==============================================
 Topic: Train Management System
 
 Group 11:
@@ -13,3 +12,4 @@ Group 11:
 Links:
 - Link for Slides: bit.ly/TMSystem2021
 - Link for Report (in LaTex): bit.ly/TMSys2021
+- Link for UI Presentation (in Figma): bit.ly/UITMS2021
