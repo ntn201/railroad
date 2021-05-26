@@ -5,15 +5,15 @@ import json
 route_fields = ['id', 'route_name']
 
 # Local server
-route_url = "http://127.0.0.1:8000/api/"
+url = "http://127.0.0.1:8000/api/"
 
 #Heroku server
-# route_url = "https://usth-railroad.herokuapp.com/api/"
+# url = "https://usth-railroad.herokuapp.com/api/"
 
 
 #Basic requests
 def get_all_route():
-    get_all_routes = requests.get(url=route_url + "route/")
+    get_all_routes = requests.get(url=url + "route/")
     all_routes = json.loads(get_all_routes.text)
     routes = []
     for route in all_routes:
@@ -25,7 +25,7 @@ def get_all_route():
     return routes
 
 def get_route(id):
-    get_route_by_id = requests.get(url=route_url + f"route/{id}/")
+    get_route_by_id = requests.get(url=url + f"route/{id}/")
     route = json.loads(get_route_by_id.text)
     route = {
             'id': route.get('id'), 
@@ -35,7 +35,7 @@ def get_route(id):
 
 # Custom requests
 def get_all_route_name():
-    get_all_routes = requests.get(url=route_url + "route/")
+    get_all_routes = requests.get(url=url + "route/")
     all_routes = json.loads(get_all_routes.text)
     routes = []
     for route in all_routes:

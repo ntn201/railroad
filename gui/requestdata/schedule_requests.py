@@ -6,15 +6,15 @@ schedule_fields = ['id', 'route_id', 'station_id', 'arrive_order', 'travel_time'
 
 
 # Local server
-schedule_url = "http://127.0.0.1:8000/api/"
+url = "http://127.0.0.1:8000/api/"
 
 #Heroku server
-# schedule_url = "https://usth-railroad.herokuapp.com/api/"
+# url = "https://usth-railroad.herokuapp.com/api/"
 
 
 # Basic requests
 def get_all_schedule():
-    get_all_schedules = requests.get(url=schedule_url + "schedule/")
+    get_all_schedules = requests.get(url=url + "schedule/")
     all_schedules = json.loads(get_all_schedules.text)
     schedules = []
     for schedule in all_schedules:
@@ -29,7 +29,7 @@ def get_all_schedule():
     return schedules
 
 def get_schedule(id):
-    get_schedule_by_id = requests.get(url=schedule_url + f"schedule/{id}/")
+    get_schedule_by_id = requests.get(url=url + f"schedule/{id}/")
     schedule = json.loads(get_schedule_by_id.text)
     schedule = {
             'id': schedule.get('id'), 
@@ -41,3 +41,5 @@ def get_schedule(id):
     return schedule
 
 # Custom requests
+
+# print(get_all_schedule())
