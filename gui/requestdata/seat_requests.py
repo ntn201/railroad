@@ -3,12 +3,17 @@ import json
 
 
 seat_fields = ['id', 'train_id', 'seat_number', 'is_taken']
-seat_url = "http://127.0.0.1:8000/seat/"
+
+# Local server
+seat_url = "http://127.0.0.1:8000/api/"
+
+#Heroku server
+# seat_url = "https://usth-railroad.herokuapp.com/api/"
 
 
 # Basic requests
 def get_all_seat():
-    get_all_seats = requests.get(url="http://127.0.0.1:8000/seat/")
+    get_all_seats = requests.get(url=seat_url + "seat/")
     all_seats = json.loads(get_all_seats.text)
     seats = []
     for seat in all_seats:
@@ -21,7 +26,7 @@ def get_all_seat():
     return seats
 
 def get_seat(id):
-    get_seat_by_id = requests.get(url=f"http://127.0.0.1:8000/seat/{id}/")
+    get_seat_by_id = requests.get(url=seat_url + f"seat/{id}/")
     seat = json.loads(get_seat_by_id.text)
     seat = {
             'id': seat.get('id'), 
@@ -34,7 +39,7 @@ def get_seat(id):
 
 # Custom requests
 def get_seats_of_train(train_id):
-    all_seats = requests.get(url="http://127.0.0.1:8000/seat/")
+    all_seats = requests.get(url=seat_url + "seat/")
     all_seats = json.loads(all_seats.text)
     taken_seats = []
     for seat in all_seats:
