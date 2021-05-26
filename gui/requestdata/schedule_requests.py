@@ -6,10 +6,10 @@ schedule_fields = ['id', 'route_id', 'station_id', 'arrive_order', 'travel_time'
 
 
 # Local server
-url = "http://127.0.0.1:8000/api/"
+# url = "http://127.0.0.1:8000/api/"
 
 #Heroku server
-# url = "https://usth-railroad.herokuapp.com/api/"
+url = "https://usth-railroad.herokuapp.com/api/"
 
 
 # Basic requests

@@ -5,10 +5,10 @@ import json
 station_fields = ['id', 'station_name', 'station_distance']
 
 # Local server
-url = "http://127.0.0.1:8000/api/"
+# url = "http://127.0.0.1:8000/api/"
 
 #Heroku server
-# url = "https://usth-railroad.herokuapp.com/api/"
+url = "https://usth-railroad.herokuapp.com/api/"
 
 # Basic requests
 def get_all_station():
