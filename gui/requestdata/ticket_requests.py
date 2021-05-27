@@ -1,7 +1,7 @@
 import requests
 import json
-from train_requests import get_train
-from seat_requests import get_all_seat
+from .train_requests import get_train
+from .seat_requests import get_all_seat
 
 ticket_fields = ['id', 'customer_name', 'customer_id', 'customer_phone', 'departing_station', 'destination', 'train_id', 'ticket_type', 'seat_number', 'price', 'bought_at']
 
