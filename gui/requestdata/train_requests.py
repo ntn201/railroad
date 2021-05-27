@@ -9,10 +9,10 @@ from .schedule_requests import get_all_schedule
 train_fields = ['id', 'train_name', 'route_id', 'departing_time', 'number_of_seats']
 
 # Local server
-url = "http://127.0.0.1:8000/api/"
+# url = "http://127.0.0.1:8000/api/"
 
 #Heroku server
-# url = "https://usth-railroad.herokuapp.com/api/"
+url = "https://usth-railroad.herokuapp.com/api/"
 
 
 # Basic requests

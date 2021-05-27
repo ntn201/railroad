@@ -6,10 +6,10 @@ from .seat_requests import get_all_seat
 ticket_fields = ['id', 'customer_name', 'customer_id', 'customer_phone', 'departing_station', 'destination', 'train_id', 'ticket_type', 'seat_number', 'price', 'bought_at']
 
 # Local server
-url = "http://127.0.0.1:8000/api/"
+# url = "http://127.0.0.1:8000/api/"
 
 #Heroku server
-# url = "https://usth-railroad.herokuapp.com/api/"
+url = "https://usth-railroad.herokuapp.com/api/"
 
 
 # Basic requests

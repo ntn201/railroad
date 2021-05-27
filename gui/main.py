@@ -9,7 +9,7 @@ from requestdata.station_requests import  *
 root = Tk()
 root.title('Good Job!')
 root.geometry('1000x800') #wxh
-root.maxsize(width=1000, height=800)
+root.maxsize(width=1200, height=1000)
 root.minsize(width=1000, height=700)
 #Mystyle MyColor
 lightedblue = '#%02x%02x%02x' % (67, 86, 145)
@@ -187,7 +187,7 @@ def adminfindseat(seated):
     my_canvas.pack_forget()
     my_scrollbar.pack_forget()
     for i in range(0, len(adminseatlist)):
-        adminseatlist[i].config(image=greenimg)
+        adminseatlist[i].button.config(image=greenimg)
     adminbtnavailabel(seated)
     adminseatcontainerframe.pack(fill=BOTH, expand=YES)
 def traininfo():
@@ -405,7 +405,7 @@ def changecolor(seatno):
 adminseatlist = []
 def adminbtnavailabel(seated):
     for i in seated:
-        adminseatlist[i-1].config(image=redimg)
+        adminseatlist[i-1].button.config(image=redimg)
 #Container
 containerframe = LabelFrame(root, bg=blue)
 #Header
