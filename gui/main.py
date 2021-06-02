@@ -97,7 +97,7 @@ def userselecttrainname(event):
     id = trainnamecombobox.current()+1
     tmprecord = get_train_info(id)
     for i in range(0, len(userseatlist)):
-        userseatlist[i].config(image=greenimg)
+        userseatlist[i].button.config(image=greenimg)
     refresh_list(userseated)
     for i in range (0, len(userseated)):
         userseated.pop()
@@ -397,7 +397,7 @@ def about():
 userseatlist = []
 def btnavailabel(seated):
     for i in seated:
-        userseatlist[i-1].config(image=redimg)
+        userseatlist[i-1].button.config(image=redimg)
 def changecolor(seatno):
     userseatlist[seatno].button.config(image=redimg)
     print(userseatlist[seatno].button.cget("text"))

@@ -76,6 +76,7 @@ ticket_update_form = {
 
 def create_ticket(request):
     create_ticket = requests.post(url=url + "ticket/create/", json=request)
+    print(create_ticket.text)
     return create_ticket.text
 
 def update_ticket(request, id):
@@ -124,4 +125,4 @@ def get_ticket_info(id):
     }
     return ticket_info
 
-print(get_all_ticket())
+# print(get_all_ticket())

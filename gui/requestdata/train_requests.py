@@ -2,9 +2,10 @@ import requests
 import json
 from datetime import datetime
 
-from .route_requests import get_route
-from .seat_requests import get_seats_of_train
-from .schedule_requests import get_all_schedule
+from route_requests import get_route
+from seat_requests import get_seats_of_train
+from schedule_requests import get_all_schedule
+from station_requests import get_all_station
 
 train_fields = ['id', 'train_name', 'route_id', 'departing_time', 'number_of_seats']
 
@@ -95,17 +96,28 @@ def train_through(departing, destination):
     get_all_schedules = requests.get(url=url + "schedule/")
     all_schedules = json.loads(get_all_schedules.text)
 
+    destination_id = 0
+    departing_id = 0
+
+    get_all_stations = requests.get(url=url+"station/")
+    all_stations = json.loads(get_all_stations.text)
+    for station in all_stations:
+        if station.get("station_name") == destination:
+            destination_id = station.get("id")
+        elif station.get("station_name") == departing:
+            departing_id = station.get("id")
+
     destination_order = []
     routes = []
     for schedule in all_schedules:
-        if schedule.get('station_id') == destination:
+        if schedule.get('station_id') == destination_id:
             destination_order.append(schedule.get('arrive_order'))
             routes.append(schedule.get('route_id'))
     
     found_routes = []
     for i in range(len(routes)):
         for schedule in all_schedules:
-            if schedule.get('route_id') == routes[i] and schedule.get('station_id') == departing and schedule.get('arrive_order') < destination_order[i]:
+            if schedule.get('route_id') == routes[i] and schedule.get('station_id') == departing_id and schedule.get('arrive_order') < destination_order[i]:
                 found_routes.append(routes[i])
     
     get_all_trains = requests.get(url=url + "train/")
@@ -117,5 +129,5 @@ def train_through(departing, destination):
                 trains.append(train)
     return trains
 
-# print(train_through(1, 23))
+print(train_through("Sai Gon", "Hai Phong"))
 
