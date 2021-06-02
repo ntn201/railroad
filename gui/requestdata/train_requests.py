@@ -129,5 +129,19 @@ def train_through(departing, destination):
                 trains.append(train)
     return trains
 
-# print(train_through("Sai Gon", "Hai Phong"))
+def get_train_by_name(train_name):
+    get_all_train = requests.get(url=url + "train/")
+    all_trains = json.loads(get_all_train.text)
+
+    for train in all_trains:
+        if train.get("train_name") == train_name:
+            train_info = {
+                "train_name": train.get("train_name"),
+                "route_name": get_route(train.get("route_id")),
+                "departing_time": train.get("departing_time"),
+                "number_of_seats": train.get("number_of_seats"),
+                "taken_seats": get_seats_of_train(train.get("id"))
+            }
+            return train_info
+
 
