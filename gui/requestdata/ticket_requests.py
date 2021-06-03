@@ -125,4 +125,23 @@ def get_ticket_info(id):
     }
     return ticket_info
 
+def get_ticket_by_phone(customer_phone):
+    get_all_tickets = requests.get(url=url + "ticket/")
+    all_tickets = json.loads(get_all_tickets.text)
+    found_ticket = []
+    for ticket in all_tickets:
+        if ticket.get("customer_phone") == customer_phone:
+            ticket_info = {
+                "customer_name": ticket.get("customer_name"),
+                "customer_id": ticket.get("customer_id"),
+                "customer_phone": ticket.get("customer_phone"),
+                "price": ticket.get("price"),
+                "train_name": get_train(ticket.get("train_id")).get("train_name"),
+                "seat_number": ticket.get("seat_number")
+            }
+            found_ticket.append(ticket_info)
+            
+    return found_ticket
+    
+
 # print(get_all_ticket())

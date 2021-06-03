@@ -71,6 +71,7 @@ def get_all_train_info():
     train_infos = []
     for train in all_train:
         train_info = {
+            "id": train.get("id"),
             "train_name": train.get("train_name"),
             "route_name": get_route(train.get("route_id")),
             "departing_time": train.get("departing_time"),
